@@ -1,0 +1,10 @@
+Lab 4 Notes
+
+Individual Display speed // 500 Hz
+Text scrolling speed 	 // 2 Hz
+TimeoutTimer
+	Should be faster as level goes up
+	TimeToDisplay + 2*TimeToDisplay // X = 3*((1/NHz)*numRounds) seconds 
+Hint Timer
+	Reset the timer
+
