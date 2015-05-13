@@ -9,6 +9,9 @@ int main() {
 		for (int j = 0; j < 350; j++) {
 			cout << rand() % 2;
 		}
-		cout << ",\n";
+		if (i < 7)
+			cout << ",\n";
+		else
+			cout << "\n";
 	}
 }
