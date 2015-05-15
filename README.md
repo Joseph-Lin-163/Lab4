@@ -1,6 +1,6 @@
 # Lab4
 
-Files authored by Joseph Lin:
+Files authored by Joseph Lin:\n
 1. coefilegen.cpp coefilegen test.coe
 2. verify.cpp verify verified.txt
 
