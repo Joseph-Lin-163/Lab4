@@ -50,7 +50,7 @@ int main() {
 	for (int i = 0; i < 56; i += 28) {
 		cout << spaces;
 	}
-	cout << "\n";
+	cout << ",\n";
 	for (int i = 0; i < 15; i++) {
 		for (int j = 0; j < 1400; j+= 28) {
 			int choose = rand() % 5;
@@ -71,7 +71,7 @@ int main() {
 			}
 		}
 		
-		if (i < 7)
+		if (i < 14)
 			cout << ",\n";
 		else
 			cout << "\n";
