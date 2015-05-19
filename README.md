@@ -46,16 +46,16 @@ TODO:
 
 Program all the logic for the game 
 
-  Displaying the pattern for every round
+  -Displaying the pattern for every round
   
-  Flashing the user's move for every correct button (e.g. UP will flash on the screen if the user pushes UP)
+  -Flashing the user's move for every correct button (e.g. UP will flash on the screen if the user pushes UP)
   
-  Displaying LOSE if the user pushes the wrong button for the next pattern direction or waits too long to input the pattern
+  -Displaying LOSE if the user pushes the wrong button for the next pattern direction or waits too long to input the pattern
   
-  Inputting their initials for the high score if they qualify at the end of their game
+  -Inputting their initials for the high score if they qualify at the end of their game
   
 Program the high score screen display
 
-  Flash between HIGH SCORE AAA 00
+  -Flash between HIGH SCORE AAA 00
   
 Program the scrolling welcome message
