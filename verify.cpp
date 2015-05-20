@@ -58,7 +58,7 @@ int main() {
 	string up = ;
 	*/
 
-	for (int i = 0; i < 8; i++) {
+	for (int i = 0; i < 15; i++) {
 		cin >> s;
 		for (int j = 0; j < 50; j++) {
 			for (int k = 0; k < 5; k++) {
