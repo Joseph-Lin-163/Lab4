@@ -74,3 +74,18 @@ A: 0100000
 Y: 0010001
 S: 0010010
 S: 1111111 (Space)
+
+always @ posedge clk
+	addr <= addr + 1
+	dina <= douta of the other memory blcok
+
+
+
+reg [27:0] assigne [49:0] // 2D array
+
+// He said do this
+always @ posedge clk
+	if (init)
+		addra <= sel
+		index <= index + 1
+		assign[indx] <= douta

@@ -23,6 +23,7 @@ int main() {
 	/*
 		Create "WELCOME TO SIMON SAYS SCREEN"
 	*/
+	/*
 	int count = 0;
 	for (int i = 0; i < 1344; i += 28) {
 		if (count % 6 == 0) {
@@ -51,8 +52,9 @@ int main() {
 		cout << spaces;
 	}
 	cout << ",\n";
-	for (int i = 0; i < 15; i++) {
-		for (int j = 0; j < 1400; j+= 28) {
+	*/
+	for (int i = 0; i < 200; i++) {
+		//for (int j = 0; j < 1400; j+= 28) {
 			int choose = rand() % 5;
 			if (choose == 0) {
 				cout << mid;
@@ -69,13 +71,18 @@ int main() {
 			else {
 				cout << up;
 			}
-		}
+		//}
 		
+		/*
 		if (i < 14)
 			cout << ",\n";
 		else
 			cout << "\n";
+		*/
+		cout << "\n";
 	}
+
+	return 0;
 }
 
 /* 
