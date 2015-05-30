@@ -11,31 +11,78 @@ int main() {
 	string down = "1000000100000010101011001000";
 	string up = "1000001000110011111111111111";
 	cout << "memory_initialization_radix=2;\nmemory_initialization_vector=\n";
-	for (int i = 0; i < 8; i++) {
-		for (int j = 0; j < 1400; j+= 28) {
+
+	string welc = "1010101000011010001111000110";
+	string omes = "1000000110101000001101111111";
+	string toss = "0000111100000011111110010010";
+	string imon = "1001111110101010000001001000";
+	string ssay = "1111111001001001000000010001";
+	string ssss = "0010010111111111111111111111";
+	string spaces = "1111111111111111111111111111";
+
+	/*
+		Create "WELCOME TO SIMON SAYS SCREEN"
+	*/
+	/*
+	int count = 0;
+	for (int i = 0; i < 1344; i += 28) {
+		if (count % 6 == 0) {
+			cout << welc;
+		}
+		else if (count % 6 == 1) {
+			cout << omes;
+		}
+		else if (count % 6 == 2) {
+			cout << toss;
+		}
+		else if (count % 6 == 3) {
+			cout << imon;
+		}
+		else if (count % 6 == 4) {
+			cout << ssay;
+		}
+		else if (count % 6 == 5) {
+			cout << ssss;	
+		}
+
+		count++;
+	}
+
+	for (int i = 0; i < 56; i += 28) {
+		cout << spaces;
+	}
+	cout << ",\n";
+	*/
+	for (int i = 0; i < 200; i++) {
+		//for (int j = 0; j < 1400; j+= 28) {
 			int choose = rand() % 5;
 			if (choose == 0) {
-				cout << mid;
+				cout << mid << ",";
 			}
 			else if (choose == 1) {
-				cout << rite;
+				cout << rite << ",";
 			}
 			else if (choose == 2) {
-				cout << left;
+				cout << left << ",";
 			}
 			else if (choose == 3) {
-				cout << down;
+				cout << down << ",";
 			}
 			else {
-				cout << up;
+				cout << up << ",";
 			}
-		}
+		//}
 		
-		if (i < 7)
+		/*
+		if (i < 14)
 			cout << ",\n";
 		else
 			cout << "\n";
+		*/
+		cout << "\n";
 	}
+
+	return 0;
 }
 
 /* 

@@ -31,3 +31,31 @@ to make sure that the COE file did indeed output the instructions properly.
 I pattern matched the seven-segment code to their proper instructions
 
 The output is what we expect
+
+Files authored by Josh
+
+master.v - links everything together for simulation
+
+masterCLK.v - creates all the clocks necessary for the levels' difficulty, scrolling, blinking... everything
+
+levels.v - determines what level difficulty the user selects through the 8 switches
+
+mainMenu.v - determines the navigation between the main menu screen, high score screen, and game screen
+
+TODO:
+
+Program all the logic for the game 
+
+  -Displaying the pattern for every round
+  
+  -Flashing the user's move for every correct button (e.g. UP will flash on the screen if the user pushes UP)
+  
+  -Displaying LOSE if the user pushes the wrong button for the next pattern direction or waits too long to input the pattern
+  
+  -Inputting their initials for the high score if they qualify at the end of their game
+  
+Program the high score screen display
+
+  -Flash between HIGH SCORE AAA 00
+  
+Program the scrolling welcome message
