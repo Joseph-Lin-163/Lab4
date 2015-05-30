@@ -39,47 +39,41 @@ module levels(
     always @ (posedge clk)
     begin
                 case(sw)
-                    8'b00000000: 
+                    8'b00000001: 
                             begin
                                 clkOut <= clock0;
                                 validStart <= 1;
                             end
-                    8'b00000001: 
+                    8'b00000011: 
                             begin
                                 clkOut <= clock1;
                                 validStart <= 1;
                             end
-                    8'b00000011: 
+                    8'b00000111: 
                             begin
                                 clkOut <= clock2;
                                 validStart <= 1;
                             end
-                    8'b00000111: 
+                    8'b00001111: 
                             begin
                                 clkOut <= clock3;
                                 validStart <= 1;
                             end
-                    8'b00001111: 
+                    8'b00011111: 
                             begin
                                 clkOut <= clock4;
                                 validStart <= 1;
                             end
-                    8'b00011111: 
+                    8'b00111111: 
                             begin
                                 clkOut <= clock5;
                                 validStart <= 1;
                             end
-                    8'b00111111:
+                    8'b01111111:
                             begin
                                 clkOut <= clock6;
                                 validStart <= 1;
                             end
-                    8'b01111111: 
-                            begin
-                                clkOut <= clock7;
-                                validStart <= 1;
-                            end
-                    
                     default: 
                             begin
                                 clkOut <= clock0;

@@ -34,7 +34,8 @@ module masterCLK(
     
     output reg clockScroll, // 2 Hz
     output reg clockFast,   // 500 Hz
-    output reg clockBlink   //   3 Hz
+    output reg clockBlink,  //   3 Hz
+    output reg clockInit   // 50 Hz
 	 
     );
 
@@ -49,6 +50,7 @@ module masterCLK(
      reg [26:0] counterScroll;
      reg [26:0] counterBlink;
 	 reg [26:0] fastCounter;
+     reg [26:0] counterInit;
 	 
 	 
     // 100 Mhz = 100 000 000, 27 bits needed
@@ -69,6 +71,7 @@ module masterCLK(
                 clockScroll <= 0; // 2 Hz
                 clockFast <= 0;   // 500 Hz
                 clockBlink <= 0;  // 3 Hz
+                clockInit <= 0;
 					 
                 counter0 <= 'd0;
                 counter1 <= 'd0;
@@ -81,6 +84,7 @@ module masterCLK(
                 counterScroll <= 'd0;
                 counterBlink <= 'd0;
 				fastCounter <= 'd0;
+                counterInit <= 'd0;
 					 
             end
         else
@@ -166,6 +170,14 @@ module masterCLK(
                 end
                 else
                     counterBlink <= counterBlink + 'd1;
+                
+                if (counterInit == 'd20000/*00*/)
+                begin
+                    clockInit <= ~clockInit;
+				    counterInit <= 'd0;
+                end
+                else
+					counterInit <= counterInit + 'd1;
 
             end     // end else block
     end             // end always block 

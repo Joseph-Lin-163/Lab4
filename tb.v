@@ -22,6 +22,10 @@ module tb(
     );
 	// remember reg for input and wire for output
     reg clk, rst;
+    reg btnM, btnL, btnR;
+    reg [7:0] sw;
+    wire [3:0] an;
+    wire [6:0] out;
 	 
     wire clock0;      // .71 Hz
     wire clock1;      // .833 Hz
@@ -30,96 +34,117 @@ module tb(
     wire clock4;      // 1.66 Hz
     wire clock5;      // 2.5 Hz
     wire clock6;      // 5Hz
+    
+    
+    wire clockScroll;
     wire clockFast;
     wire clockBlink;
-	 
-	 reg ADJ, SEL, PAUSE;
-	 wire clkOut;
-     
-	 wire [6:0] out;
-    wire [3:0] an;
-	 
+    wire clockInit;
+    wire validStart;
     
+    
+    wire [1:0] state;
+	 
+	wire clkOut;
+     
+	 
     masterCLK myCLK (
-	     // inputs
-        .clk (clk),
-		.rst (rst),
+	      // inputs
+          .clk (clk),
+		  .rst (rst),
 		  
 		  //outputs
-        .clock0 (clock0),
-        .clock1 (clock1),
-        .clock2 (clock2),
-        .clock3 (clock3),
-        .clock4 (clock4),
-        .clock5 (clock5),
-        .clock6 (clock6),
-        .clockFast (clockFast),
-        .clockBlink (clockBlink)
+          .clock0 (clock0),      // .71 Hz
+          .clock1 (clock1),      // .833 Hz
+          .clock2 (clock2),      // 1 Hz
+          .clock3 (clock3),      // 1.25 Hz
+          .clock4 (clock4),      // 1.66 Hz
+          .clock5 (clock5),      // 2.5 Hz
+          .clock6 (clock6),      // 5Hz
+    
+          .clockScroll(clockScroll), // 2Hz
+          .clockFast(clockFast),     // 500 Hz
+          .clockBlink(clockBlink),   //   3 Hz
+          .clockInit(clockInit)      // 50 Hz
         );
+ 
+ 
+    levels theLevels(
+        //inputs
+        .clk(clk), 
+        //input rst,
+        .sw (sw),
+    
+        .clock0(clock0),      // .71 Hz
+        .clock1(clock1),      // .833 Hz
+        .clock2(clock2),      // 1 Hz
+        .clock3(clock3),      // 1.25 Hz
+        .clock4(clock4),      // 1.66 Hz
+        .clock5(clock5),      // 2.5 Hz
+        .clock6(clock6),      // 5Hz
+        // output
+        .validStart(validStart),
+        .clkOut(clkOut)
+    );
+    
+    mainMenu mm(
+        //input
+        .clk (clk),
+        .rst (rst),
+        .btnM (btnM),
+        .btnR(btnR),
+        .btnL(btnL),
+        .validStart(validStart),
+        .prevState (state),
+        // output
+        .state(state)
+    
+    );
+    welcome w(
+        // input
+        .clockFast(clockFast),
+        .clockScroll(clockScroll),
+        // output
+        .an (an),
+        .out (out)
+    );
         
-	/* masterToTimer mtt (
-			// inputs
-			.ADJ (ADJ),
-			.SEL (SEL),
-         
-			.clk (clk),
-			.clock2Hz (clock2Hz),
-			.clock1Hz (clock1Hz),
-
-			//output
-			.clkOut (clkOut)
-			);
-			 
-	 timer timer_t (
-		// input
-		.masterCLK(clk),
-		.SEL(SEL),
-		.ADJ(ADJ),
-		.rst(rst),
-		.clk(clkOut),
-		.PAUSE(PAUSE),
-      .clockFast(clockFast),
-		.clockBlink(clockBlink),
-        
-		//output
-      .an (an),
-		.out (out)	
-		);*/
-			
-			
+	gameplay gp(
+    .clk(clkOut),
+    .clkInit(clockInit),
+    .state(state)
+    
+    );		
+            
     initial begin
         clk = 1'b0;
-		  rst = 1'b1;
+		rst = 1'b1;
         repeat(4) #10 clk = ~clk;
-		  rst = 1'b0;
+		rst = 1'b0;
         forever #1 clk = ~clk;
     end
     
     initial begin
-			ADJ = 0;
-			PAUSE = 0;
-			SEL = 0;
+          btnR = 0;
+          btnM = 0;
+          btnL = 0;
+          sw = 'b0000001;
+          
+          #50000
+		    rst = 1'b1;
+          #50000
+          rst = 0;
+          #500000
+          btnR = 1;
+          #50000
+          btnR = 0;
+          #100000
+          btnL = 1;
+          #50000
+          btnL = 0;
+          
+          #500000000
 		  
-        #5000000
-		  rst = 1'b1;
-		  #5000000
-		  rst = 1'b0;
-		  #50000000
-		  rst = 1'b1;
-		  #5000000
-		  rst = 1'b0;
-		  #50000000
-		  PAUSE = 1'b1;
-		  #5000000
-		  PAUSE = 1'b0;
-		  ADJ = 1'b1;
-		  #500000000
-		  SEL = 1;
-		  #500000000
-		  ADJ = 0;
-		  #500000000
-		   ADJ = 0;
-        #100000000
     $finish;
     end
 endmodule
