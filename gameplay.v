@@ -110,15 +110,24 @@ module gameplay(
     /******************** BEGIN JO ********************/
 
 	// Use a 28 wide by 4 depth array to store the high score information
-	reg [27:0] highText = 28'b0001001100111110000100001001; // HIGH
-	reg [27:0] scorText = 28'b0010010100011010000001001100; // SCOR
-	reg [27:0] nameText = 28'b0100000010000001000001111111; // AAA
-	reg [27:0] hsvalueText = 28'b1000000100000010000001000000;  // 0000
-	
+	// reg [27:0] highText = 28'b0001001100111110000100001001; // HIGH
+	// reg [27:0] scorText = 28'b0010010100011010000001001100; // SCOR
+	// reg [6:0] hsvalueText = 28'b1000000100000010000001000000;  // 0000
+
+	reg [6:0] nameText0 = 7'b0100000;
+	reg [6:0] nameText1 = 7'b0100000;
+	reg [6:0] nameText2 = 7'b0100000;
+	reg [6:0] nameText3 = 7'b1111111; 
+
+	reg [6:0] hsvalueText0 = 7'b1000000;
+	reg [6:0] hsvalueText1 = 7'b1000000;
+	reg [6:0] hsvalueText2 = 7'b1000000;
+	reg [6:0] hsvalueText3 = 7'b1000000;
 
 	// Use a reg named hsCount to cycle through highScore
 	// Maybe
-	reg [1:0] hsCount = 2'b00;
+	reg [8:0] hsCount = 9'b000000000;
+	reg [1:0] textSel = 2'b00;
 
 	/********************  END JO  ********************/
 	 
@@ -517,11 +526,151 @@ module gameplay(
 		begin
 			// TODO for Jo:
 		    // put in the display logic here for the main menu High score stuff
+		    case(textSel)
+		    	b'00:
+		    	begin
+				    case(cnt)        
+			        	'b00: begin
+			                out <= 'b0001001; // H
+			                an <= 4'b1110;
+			      	        cnt <= cnt + 1;
+						end
+			        	'b01: begin
+			                out <= 'b1000010; // G
+			                an <= 4'b1101;
+			                cnt <= cnt + 1;
+						end
+			        	'b10: begin
+			                out <= 'b1001111; // I
+			                an <= 4'b1011;
+			                cnt <= cnt + 1;
+			            end
+			        	'b11: begin
+			                out <= 'b0001001; // H
+			                an <= 4'b0111;
+			                cnt <= cnt + 1;
+			            end             
+			        endcase
+			    end
+			    b'01:
+		    	begin
+				    case(cnt)        
+			        	'b00: begin
+			                out <= 'b1001100; // R
+			                an <= 4'b1110;
+			      	        cnt <= cnt + 1;
+						end
+			        	'b01: begin
+			                out <= 'b1000000; // O
+			                an <= 4'b1101;
+			                cnt <= cnt + 1;
+						end
+			        	'b10: begin
+			                out <= 'b1000110; // C
+			                an <= 4'b1011;
+			                cnt <= cnt + 1;
+			            end
+			        	'b11: begin
+			                out <= 'b0010010; // S
+			                an <= 4'b0111;
+			                cnt <= cnt + 1;
+			            end             
+			        endcase
+			    end
+			    b'10:
+		    	begin
+				    case(cnt)        
+			        	'b00: begin
+			                out <= nameText3;
+			                an <= 4'b1110;
+			      	        cnt <= cnt + 1;
+						end
+			        	'b01: begin
+			                out <= nameText2;
+			                an <= 4'b1101;
+			                cnt <= cnt + 1;
+						end
+			        	'b10: begin
+			                out <= nameText1;
+			                an <= 4'b1011;
+			                cnt <= cnt + 1;
+			            end
+			        	'b11: begin
+			                out <= nameText0;
+			                an <= 4'b0111;
+			                cnt <= cnt + 1;
+			            end             
+			        endcase
+			    end
+			    b'11:
+		    	begin
+				    case(cnt)        
+			        	'b00: begin
+			                out <= hsvalueText3;
+			                an <= 4'b1110;
+			      	        cnt <= cnt + 1;
+						end
+			        	'b01: begin
+			                out <= hsvalueText2;
+			                an <= 4'b1101;
+			                cnt <= cnt + 1;
+						end
+			        	'b10: begin
+			                out <= hsvalueText1;
+			                an <= 4'b1011;
+			                cnt <= cnt + 1;
+			            end
+			        	'b11: begin
+			                out <= hsvalueText0;
+			                an <= 4'b0111;
+			                cnt <= cnt + 1;
+			            end             
+			        endcase
+			    end
+	        endcase
+
+	        if (hsCount != 9'b111111111)
+	        begin
+	        	hsCount <= hsCount + 1;
+	        end
+	        else
+	        begin
+	        	hsCount <= 9'b000000000;
+	        	textSel <= textSel + 1;
+	        end
 		end
 		else if (gameOver == 1)
 		begin
 			// TODO for Jo:
 			// put in the display logic here for the High score stuff at a game over
+			/*
+				TODO for Josh:
+				Let me know your idea on this implementation. What should I add or remove?
+				Also, what variable stores the score?
+
+				Implement:
+				1. If score > high_score, set high_score = score
+				   Then, change values of hsvalueText 0 through 3 (0 = l, 1 = ml, 2 = mr, 3 = r)
+				   Display:
+						NEW
+						HIGH
+						SCOR
+						(score)
+						ENTR
+						NAME
+						AAA
+							Then, allow user to input their initials
+							(Up = Go backwards in the alphabet)
+							(Down = Go forwards in the alphabet)
+							(Left = Go left on initials)
+							(Right = Go right on the initials)
+							(Center = Submit initials) 
+				2. Else, 
+					Display:
+						YOUR
+						SCOR
+						(Score)
+			*/
 		end
 		else if (on == 0)
 		begin
