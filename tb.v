@@ -22,10 +22,11 @@ module tb(
     );
 	// remember reg for input and wire for output
     reg clk, rst;
-    reg btnM, btnL, btnR;
+    reg btnM, btnL, btnR, btnU, btnD;
     reg [7:0] sw;
     wire [3:0] an;
     wire [6:0] out;
+	 reg [1:0] random;
 	 
     wire clock0;      // .71 Hz
     wire clock1;      // .833 Hz
@@ -41,17 +42,18 @@ module tb(
     wire clockBlink;
     wire clockInit;
     wire validStart;
+
     
     
     wire [1:0] state;
 	 
-	wire clkOut;
+	 wire clkOut;
      
 	 
     masterCLK myCLK (
 	      // inputs
           .clk (clk),
-		  .rst (rst),
+		    .rst (rst),
 		  
 		  //outputs
           .clock0 (clock0),      // .71 Hz
@@ -104,16 +106,29 @@ module tb(
         // input
         .clockFast(clockFast),
         .clockScroll(clockScroll),
+		  .state(state),
         // output
         .an (an),
         .out (out)
     );
         
 	gameplay gp(
+	 // input
     .clk(clkOut),
     .clkInit(clockInit),
-    .state(state)
+    .state(state),
+	 .random(random),
     
+	 .btnR(btnR),
+	 .btnM(btnM),
+	 .btnL(btnL),
+	 .btnU(btnU),
+	 .btnD(btnD),
+	 
+	 .clockFast(clockFast),
+	 // output
+    .an(an),
+    .out(out)
     );		
             
     initial begin
@@ -126,10 +141,15 @@ module tb(
     
     initial begin
           btnR = 0;
-          btnM = 0;
+          btnM = 1;
           btnL = 0;
+			 btnU = 0;
+			 btnD = 0;
           sw = 'b0000001;
-          
+          if (sw == 'b0000001)
+				random = 'b01;
+			 else
+				random = 'b10;
           #50000
 		    rst = 1'b1;
           #50000
@@ -142,9 +162,14 @@ module tb(
           btnL = 1;
           #50000
           btnL = 0;
-          
-          #500000000
-		  
+           
+          #50000000
+			 btnM = 1;
+			 #5000
+			 btnM = 0;
+			 #500000000
+			 #500000000
+		    
     $finish;
     end
 endmodule
