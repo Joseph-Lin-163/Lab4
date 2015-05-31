@@ -116,6 +116,7 @@ module tb(
 	gameplay gp(
 	 // input
     .clk(clkOut),
+	 .clk1Hz(clock2),
     .clkInit(clockInit),
     .state(state),
 	 .random(random),

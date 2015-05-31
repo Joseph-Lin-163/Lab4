@@ -20,6 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 module gameplay(
     input clk, // clk from the appropriate level speed
+	 input clk1Hz,
     input clkInit,
     input [1:0] state,
     input [1:0] random,
@@ -68,19 +69,15 @@ module gameplay(
 	/******************** BEGIN JO ********************/
 
 	// Use a 28 wide by 4 depth array to store the high score information
-	reg [27:0] highScore [3:0];
-
-	// Initialize the highScore information
-	highScore[0] = 28'b0001001100111110000100001001; // HIGH
-	highScore[1] = 28'b0010010100011010000001001100; // SCOR
-	highScore[2] = 28'b0100000010000001000001111111; // AAA
-	highScore[3] = 28'b1000000100000010000001000000; // 0000
+	reg [27:0] highScore [0:3] = { 
+	28'b0001001100111110000100001001, // HIGH
+	28'b0010010100011010000001001100, // SCOR
+	28'b0100000010000001000001111111, // AAA
+	28'b1000000100000010000001000000  // 0000
+	};
 
 	// Use a reg named hsCount to cycle through highScore
-	reg [1:0] hsCount;
-
-	// Initialize hsCount to 00
-	hsCount = 2'b00;
+	reg [1:0] hsCount = 2'b00;
 
 	/********************  END JO  ********************/
 
@@ -159,8 +156,9 @@ module gameplay(
 	
 	always @ (posedge clk1Hz) begin
 		if (hsCount == 2'b00) begin
+		/*
 			out <= 'b1111111;
-			an <= 'b1111;
+			an <= 'b1111;*/ // we can't change out and an in another always block
 			hsCount <= 2'b01;
 		end
 		else if (hsCount == 2'b01) begin
@@ -176,7 +174,7 @@ module gameplay(
 	end
 
 	/********************  END JO  ********************/
-	 */
+	 
 	 reg display = 1;
 	 reg on = 0;
 	 reg [5:0] loop = 'b000000;
