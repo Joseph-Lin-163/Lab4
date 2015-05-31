@@ -147,7 +147,7 @@ module tb(
 			 btnD = 0;
           sw = 'b0000001;
           if (sw == 'b0000001)
-				random = 'b01;
+				random = 'b00;
 			 else
 				random = 'b10;
           #50000
@@ -165,9 +165,29 @@ module tb(
            
           #50000000
 			 btnM = 1;
-			 #5000
+			 #500000
 			 btnM = 0;
 			 #500000000
+			 // Pattern 'b00
+			 btnL = 1;
+			 #500000
+			 btnL = 0;
+			 #500000
+			 btnU = 1;
+			 #500000
+			 btnU = 0;
+			 #500000
+			 btnD = 1;
+			 #500000
+			 btnD = 0;
+			 #500000
+			 btnD = 1;
+			 #500000
+			 btnD = 0;
+			 #500000
+			 btnM = 1;
+			 #500000
+			 btnM = 0;
 			 #500000000
 		    
     $finish;

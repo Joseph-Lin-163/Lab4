@@ -55,7 +55,7 @@ module mainMenu(
                         begin
                            // game logic
                            state <= prevState;
-                           // game logic handled in game.v
+                           // game logic handled in gameplay.v
                         end
                     2'b10: // highScore
                         begin

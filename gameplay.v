@@ -19,7 +19,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module gameplay(
-    input clk,
+    input clk, // clk from the appropriate level speed
     input clkInit,
     input [1:0] state,
     input [1:0] random,
@@ -95,10 +95,22 @@ module gameplay(
 	 end
     
 	 
+	 // TODO for Jo: 
+	 // The player is in the main menu screen and they just pushed button R to navigate
+	 // to the high score screen. 
+	 // display the alternating High Score, AAA 00, for whatever high score is currently there
+	 /*
+	  always @ (posedge )// whatever clk you want to use
+	  //you'll need a clk to switch between the High Score, initials and score 
+	  if (state == 'b10) // high score state of Main Menu
+	  begin
+			// logic here
+	  end
+	 */
 	 reg display = 1;
 	 reg on = 0;
 	 reg [5:0] loop = 'b000000;
-	 reg [5:0] max = 'b000101;
+	 reg [5:0] max = 'b000101; // TODO: change back when testing done
 	 reg [27:0] msg = 'b1111111111111111111111111111;	// blank initial message
 	 integer timer = 3;
 	 reg allCorrect = 0;
@@ -226,15 +238,16 @@ module gameplay(
 				correct <= 1;
 				msg <= 'b1000000100000010101011001000;
 			end
+			else if (timeUp == 1)
+			begin
+				msg <= 'b1000111100000000100100000110; // 'LOSE'
+			end
 			else if (~btnD && ~btnM && ~btnL && ~btnU && ~btnR) // no button is pressed
 			begin
 				press <= 0;
 				msg <= 'b1111111111111111111111111111; // blank
 			end
-			else if (timeUp == 1)
-			begin
-				msg <= 'b1000111100000000100100000110; // 'LOSE'
-			end
+
 			else // player pushed the wrong button
 			begin
 				press <= 1;
