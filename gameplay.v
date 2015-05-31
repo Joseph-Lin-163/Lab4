@@ -20,8 +20,10 @@
 //////////////////////////////////////////////////////////////////////////////////
 module gameplay(
     input clk, // clk from the appropriate level speed
+	 input clockScroll,
 	 input clk1Hz,
     input clkInit,
+	 
     input [1:0] state,
     input [1:0] random,
 	 input btnR,
@@ -29,6 +31,7 @@ module gameplay(
 	 input btnL,
 	 input btnU,
 	 input btnD,
+	 input hint,
 	 
     input clockFast,
     output reg [3:0] an,
@@ -53,7 +56,8 @@ module gameplay(
 				i <= i + 1;
 		end
 	 end
-	 
+
+
 	 
     reg [27:0] assigne [49:0]; // 2D array
     integer index = 0;
@@ -69,12 +73,13 @@ module gameplay(
 	/******************** BEGIN JO ********************/
 
 	// Use a 28 wide by 4 depth array to store the high score information
-	reg [27:0] highScore [0:3] = { 
+	// TODO: needs to be four separate variables, compile errors with 2d array
+	/*reg [27:0] highScore [0:3] = { 
 	28'b0001001100111110000100001001, // HIGH
 	28'b0010010100011010000001001100, // SCOR
 	28'b0100000010000001000001111111, // AAA
 	28'b1000000100000010000001000000  // 0000
-	};
+	};*/
 
 	// Use a reg named hsCount to cycle through highScore
 	reg [1:0] hsCount = 2'b00;
@@ -186,7 +191,7 @@ module gameplay(
 	 reg newRd = 0;
 	 reg timeUp = 0;
 	 reg mistake = 0;
-
+	 reg prevHint = 0;
 	 
 	 // handles going through the pattern at the appropriate clock speed
 	 always @ (posedge clk) begin
@@ -197,7 +202,6 @@ module gameplay(
 					timer <= 3;
 					quickPause <= 'b10;
 					newRd <= 0;
-					mistake <= 0;
 				end
 			else
 				begin
@@ -224,6 +228,14 @@ module gameplay(
 					end
 					else // player should be putting in the pattern
 					begin
+					   if (hint == 1 && prevHint == 0)
+						begin
+							newRd <= 1;
+							display <= 1;
+							max <= max - 1;
+							prevHint <= 1;
+						end
+					
 						if (allCorrect == 1)
 						begin
 							// player successfully inputted the whole pattern
@@ -236,13 +248,14 @@ module gameplay(
 						end
 						else if (timer > 0)
 							timer <= timer - 1;
-						else if (mistake == 1 || timer == 0) // wrong button or time up
+						else if ((hint == 0 && prevHint == 1) || mistake == 1 || timer == 0) // hint cheat or wrong button or time up
 						begin
 							timeUp <= 1;
 							quickPause <= quickPause - 1;
 							if (quickPause == 0)
 							begin
 								newRd <= 1;
+								prevHint <= 0;
 								display <= 1;
 								gameOver <= 1;
 								// high score = max - 1
@@ -279,6 +292,7 @@ module gameplay(
 			press <= 0;
 			correct <= 0;
 			allCorrect <= 0;
+			mistake <= 0;
 		end
 		else if (state == 'b01 && display == 0)
 		begin
@@ -363,11 +377,125 @@ module gameplay(
 	 
 	 
 	 
+	 // welcome portion (merged from welcome.v)
+    
+    /*
+    Welcome Message:
+W: 1010101
+E: 0000110
+L: 1000111
+C: 1000110
+O: 1000000
+M: 1101010
+E: 0000110
+S: 1111111 (Space)
+T: 0000111
+O: 1000000
+S: 1111111 (Space)
+S: 0010010
+I: 1001111
+M: 1101010
+O: 1000000
+N: 1001000
+S: 1111111 (Space)
+S: 0010010
+A: 0100000
+Y: 0010001
+S: 0010010
+S: 1111111 (Space)
+S: 1111111 (Space)
+S: 1111111 (Space)
+S: 1111111 (Space)
+S: 1111111 (Space)
+
+*/
+    
+    reg [6:0] r = 'b1010101;
+    reg [6:0] mr = 'b1111111;
+    reg [6:0] ml = 'b1111111;
+    reg [6:0] l = 'b1111111;
+    
+    reg [4:0] inner = 0;
+    
+    
+    always @(posedge clockScroll)
+    begin
+		if (state == 'b00)
+		begin
+                    case(inner)
+                        'b00000: r <= 7'b1010101;
+                        'b00001: r <= 7'b0000110;
+                        'b00010: r <= 7'b1000111;
+                        'b00011: r <= 7'b1000110;
+                        'b00100: r <= 7'b1000000;
+                        'b00101: r <= 7'b1101010;
+                        'b00110: r <= 7'b0000110;
+                        'b00111: r <= 7'b1111111; //(Space)
+                        'b01000: r <= 7'b0000111;
+                        'b01001: r <= 7'b1000000;
+                        'b01010: r <= 7'b1111111; //(Space)
+                        'b01011: r <= 7'b0010010;
+                        'b01100: r <= 7'b1001111;
+                        'b01101: r <= 7'b1101010;
+                        'b01110: r <= 7'b1000000;
+                        'b01111: r <= 7'b1001000;
+                        'b10000: r <= 7'b1111111; //(Space)
+                        'b10001: r <= 7'b0010010;
+                        'b10010: r <= 7'b0100000;
+                        'b10011: r <= 7'b0010001;
+                        'b10100: r <= 7'b0010010;
+                        'b10101: r <= 7'b1111111; //(Space)
+                        'b10110: r <= 7'b1111111; //(Space)
+                        'b10111: r <= 7'b1111111; //(Space)
+                        'b11000: r <= 7'b1111111; //(Space)
+                        'b11001: r <= 7'b1111111; //(Space)
+                        'b11010: r <= 7'b1111111; //(Space)
+                        'b11011: r <= 7'b1111111; //(Space)
+                        'b11100: r <= 7'b1111111; //(Space)
+                        'b11101: r <= 7'b1111111; //(Space)
+                        'b11110: r <= 7'b1111111; //(Space)
+                        'b11111: r <= 7'b1111111; //(Space)
+                    endcase
+                    inner <= inner + 1;
+                    mr <= r;
+                    ml <= mr;
+                    l <= ml;
+			end
+    end
+	 
+	 
 	 reg [1:0] cnt = 'b00;
 
 	 // handles all displaying to Seven Seg Display
 	 always @ (posedge clockFast) begin
-	 if (state == 'b01 && index < 50)
+	 if (state == 'b00)
+		begin
+        case(cnt)
+        
+        'b00: begin
+                out <= r;
+                an <= 4'b1110;
+                cnt <= cnt + 1;
+              end
+        'b01: begin
+                out <= mr;
+                an <= 4'b1101;
+                cnt <= cnt + 1;
+              end
+        'b10: begin
+                out <= ml;
+                an <= 4'b1011;
+                cnt <= cnt + 1;
+              end
+        'b11: begin
+                out <= l;
+                an <= 4'b0111;
+                cnt <= cnt + 1;
+              end
+              
+        endcase
+	   end
+	 else if (state == 'b01 && index < 50)
 	 begin
 			out <= 'b1111111;
 			an <= 'b1111;
