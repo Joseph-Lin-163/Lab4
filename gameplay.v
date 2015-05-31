@@ -22,7 +22,7 @@ module gameplay(
 
 	// Clocks
     input clk, 			// Determined by level
-	input clk1Hz, 		// May not need
+	 input clk1Hz, 		// May not need
     input clkInit, 		// To set up the instructions
     input clockFast, 	// 500 Hz, cnt == 500 for 1 second
     input clockScroll,
@@ -49,6 +49,15 @@ module gameplay(
 
 	// manages the reset to main-menu after a player ends their game
 	// QUESTION: So we count to 10 and reset to main menu?
+	// Josh: No, once the player loses, and after their high score input (if applicable)
+	// we need to reset to the main menu. newGame should be triggered at the end of 
+	// the high score function/game over function and immediately go to the main menu. 
+	// This counts to 10 and resets newGame back to 0 so it doesn't stay 1.
+	// We don't want to stay newGame forever and we can only change it in one always block...
+	// I just realized, this reset of newGame needs to happen in whatever always block contains 
+	// newGame down in the code below because we can't change it in more than one place.
+	// just handle it below and know that we need to set newGame to reset to the main menu
+	// and then turn newGame off after we've switched
 	integer i = 0;
 	always @ (posedge clkInit)
 	begin
@@ -527,13 +536,13 @@ module gameplay(
 			// TODO for Jo:
 		    // put in the display logic here for the main menu High score stuff
 		    case(textSel)
-		    	b'00:
+		    	'b00:
 		    	begin
 				    case(cnt)        
 			        	'b00: begin
 			                out <= 'b0001001; // H
 			                an <= 4'b1110;
-			      	        cnt <= cnt + 1;
+			      	       cnt <= cnt + 1;
 						end
 			        	'b01: begin
 			                out <= 'b1000010; // G
@@ -544,7 +553,7 @@ module gameplay(
 			                out <= 'b1001111; // I
 			                an <= 4'b1011;
 			                cnt <= cnt + 1;
-			            end
+			               end
 			        	'b11: begin
 			                out <= 'b0001001; // H
 			                an <= 4'b0111;
@@ -552,7 +561,7 @@ module gameplay(
 			            end             
 			        endcase
 			    end
-			    b'01:
+			    'b01:
 		    	begin
 				    case(cnt)        
 			        	'b00: begin
@@ -577,7 +586,7 @@ module gameplay(
 			            end             
 			        endcase
 			    end
-			    b'10:
+			    'b10:
 		    	begin
 				    case(cnt)        
 			        	'b00: begin
@@ -602,7 +611,7 @@ module gameplay(
 			            end             
 			        endcase
 			    end
-			    b'11:
+			    'b11:
 		    	begin
 				    case(cnt)        
 			        	'b00: begin
@@ -647,7 +656,13 @@ module gameplay(
 				TODO for Josh:
 				Let me know your idea on this implementation. What should I add or remove?
 				Also, what variable stores the score?
-
+				
+				Josh: This looks good to me. So I guess you would flash NEW, HIGH, SCOR, ENTR, NAME, and then
+				at the AAA, the user would begin their initial selection. Make sure the user is not able to change their initials until 
+				they're displayed on the seven seg. I would recommend having two states, one for the display, then one for the user input. 
+				Button pushes only do something in the latter state
+				Also I didn't create a score register yet so you can just create one
+				
 				Implement:
 				1. If score > high_score, set high_score = score
 				   Then, change values of hsvalueText 0 through 3 (0 = l, 1 = ml, 2 = mr, 3 = r)
