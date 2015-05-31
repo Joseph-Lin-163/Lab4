@@ -27,14 +27,15 @@ module mainMenu(
     input btnL,
     input validStart,
     input [1:0] prevState,
-    
+    input newGame,
+	 
     output reg [1:0] state
     
     );
     
     
     always @ (posedge clk)
-    if (rst)
+    if (rst || newGame)
     begin
         state <= 2'b00;
     end

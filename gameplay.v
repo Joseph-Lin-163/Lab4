@@ -31,10 +31,29 @@ module gameplay(
 	 
     input clockFast,
     output reg [3:0] an,
-    output reg [6:0] out
+    output reg [6:0] out,
+	 output reg newGame
 
     );
     
+
+	 // manages the reset to main-menu after a player ends their game
+	 integer i = 0;
+	 always @ (posedge clkInit)
+	 begin
+		if (newGame == 1)
+		begin
+			if (i == 10)
+			begin
+				newGame <= 0;
+				i <= 0;
+			end
+			else
+				i <= i + 1;
+		end
+	 end
+	 
+	 
     reg [27:0] assigne [49:0]; // 2D array
     integer index = 0;
     reg [7:0] sel0 = 0 * 'b110010; // 50 offset
@@ -94,9 +113,15 @@ module gameplay(
         .dina(28'b0),
         .douta(outa3)
     );
-
+	 
+	 reg gameOver = 0;
+		 
     // grabbing the pattern from block memory at the start
     always @ (posedge clkInit) begin
+		if (gameOver == 1)
+		begin
+			index <= 0;
+		end
 		if (state == 'b01 && index < 50) 
 		begin
         sel0 <= sel0 + 1; 
@@ -113,7 +138,7 @@ module gameplay(
 		end
 	 end
     
-	 reg gameOver = 0;
+
 	 
 	 // TODO for Jo: 
 	 // The player is in the main menu screen and they just pushed button R to navigate
@@ -162,6 +187,8 @@ module gameplay(
 	 reg [1:0] quickPause = 'b10;
 	 reg newRd = 0;
 	 reg timeUp = 0;
+	 reg mistake = 0;
+
 	 
 	 // handles going through the pattern at the appropriate clock speed
 	 always @ (posedge clk) begin
@@ -172,6 +199,7 @@ module gameplay(
 					timer <= 3;
 					quickPause <= 'b10;
 					newRd <= 0;
+					mistake <= 0;
 				end
 			else
 				begin
@@ -194,7 +222,7 @@ module gameplay(
 							end
 							on <= 0;
 					   end
-						timer <= timer + 1;
+						timer <= timer + 3;
 					end
 					else // player should be putting in the pattern
 					begin
@@ -210,12 +238,18 @@ module gameplay(
 						end
 						else if (timer > 0)
 							timer <= timer - 1;
-						else // ran out of time
+						else if (mistake == 1 || timer == 0) // wrong button or time up
 						begin
 							timeUp <= 1;
-							gameOver <= 1;
-							// high score = max - 1
-							// reset values
+							quickPause <= quickPause - 1;
+							if (quickPause == 0)
+							begin
+								newRd <= 1;
+								display <= 1;
+								gameOver <= 1;
+								// high score = max - 1
+							end
+						
 						end
 						
 					end
@@ -236,6 +270,7 @@ module gameplay(
 	 reg [5:0] numRight = 0;
 	 reg press = 0;
 	 reg correct = 0;
+
 	 
 	 // works in conjunction with the previous always block to grab the player input and verify it against the displayed pattern
 	 always @ (posedge clkInit) begin
@@ -247,12 +282,16 @@ module gameplay(
 			correct <= 0;
 			allCorrect <= 0;
 		end
-		else if (display == 0)
+		else if (state == 'b01 && display == 0)
 		begin
 			if (numRight == max - 1)
 			begin
 				msg <= 'b1000010100000010000000100001; // 'GOOD'
 				allCorrect <= 1;
+			end
+			else if (timeUp == 1)
+			begin
+				msg <= 'b1000111100000000100100000110; // 'LOSE'
 			end
 			else if (btnR && assigne[verify] == 'b1001100111100100001110000110 && ~btnM && ~btnL && ~btnU && ~btnD)
 			begin
@@ -284,20 +323,15 @@ module gameplay(
 				correct <= 1;
 				msg <= 'b1000000100000010101011001000;
 			end
-			else if (timeUp == 1)
-			begin
-				msg <= 'b1000111100000000100100000110; // 'LOSE'
-			end
 			else if (~btnD && ~btnM && ~btnL && ~btnU && ~btnR) // no button is pressed
 			begin
 				press <= 0;
 				msg <= 'b1111111111111111111111111111; // blank
 			end
-
 			else // player pushed the wrong button
 			begin
 				press <= 1;
-				correct <= 0;
+				mistake <= 1;
 				msg <= 'b1000111100000000100100000110; // 'LOSE'
 			end
 			
@@ -323,8 +357,13 @@ module gameplay(
 	 if (gameOver == 1)
 	 begin
 	 
+	 
+	 newGame <= 1;
 	 end
 	 */
+	 
+	 
+	 
 	 
 	 reg [1:0] cnt = 'b00;
 

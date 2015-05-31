@@ -48,7 +48,7 @@ module tb(
     wire [1:0] state;
 	 
 	 wire clkOut;
-     
+    wire newGame;
 	 
     masterCLK myCLK (
 	      // inputs
@@ -98,6 +98,7 @@ module tb(
         .btnL(btnL),
         .validStart(validStart),
         .prevState (state),
+		  .newGame(newGame),
         // output
         .state(state)
     
@@ -128,7 +129,8 @@ module tb(
 	 .clockFast(clockFast),
 	 // output
     .an(an),
-    .out(out)
+    .out(out),
+	 .newGame(newGame)
     );		
             
     initial begin
@@ -167,26 +169,28 @@ module tb(
 			 btnM = 1;
 			 #500000
 			 btnM = 0;
-			 #500000000
+			 #300000000
+			 #100000000 // 100 ms
+			 #20000000
 			 // Pattern 'b00
 			 btnL = 1;
-			 #500000
+			 #10000000
 			 btnL = 0;
-			 #500000
+			 #20000000
 			 btnU = 1;
-			 #500000
+			 #10000000
 			 btnU = 0;
-			 #500000
+			 #20000000
 			 btnD = 1;
-			 #500000
+			 #10000000
 			 btnD = 0;
-			 #500000
+			 #20000000
 			 btnD = 1;
-			 #500000
+			 #10000000
 			 btnD = 0;
-			 #500000
+			 #20000000
 			 btnM = 1;
-			 #500000
+			 #10000000
 			 btnM = 0;
 			 #500000000
 		    
