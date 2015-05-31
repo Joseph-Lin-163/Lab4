@@ -21,59 +21,39 @@
 module master(
     input clk,
     input rst,
+	 input btnM, input btnL, input btnR, input btnU, input btnD,
+	 input [7:0] sw,
+	 output [6:0] led,
     output [6:0] out,
     output [3:0] an
     );
     
-    wire clock0;
-    wire clock1;
-    wire clock2;
-    wire clock3;
-    wire clock4;
-    wire clock5;
-    wire clock6;
+	 // remember reg for input and wire for output
+    
+	 reg [1:0] random = 'b00;
+	 
+
+    wire clock0;      // .71 Hz
+    wire clock1;      // .833 Hz
+    wire clock2;      // 1 Hz
+    wire clock3;      // 1.25 Hz
+    wire clock4;      // 1.66 Hz
+    wire clock5;      // 2.5 Hz
+    wire clock6;      // 5Hz
+    
     
     wire clockScroll;
     wire clockFast;
     wire clockBlink;
-    wire clkOut;
+    wire clockInit;
+    wire validStart;
 	 
+	 wire [1:0] state;
 	 
-	 reg [26:0] fastCounter = 'd0;
-	 reg rstOut = 0;
-	 reg PAUSEOut = 0;
-     
-	 /*always @(*)
-	 begin
-			if (fastCounter == 'd200000)
-                begin
-					 fastCounter = 'd0;
-					     if (rst == 1)
-						  begin
-								rstSample = rstSample + 1;
-								rstSample = rstSample << 1;
-						  end
-						  else
-								rstSample = 0;
-								
-						  if (PAUSE == 1)
-						  begin
-								PAUSESample = PAUSESample + 1;
-								PAUSESample = PAUSESample << 1;
-						  end
-						  else
-								PAUSESample = 0;
-					 end
-			else
-				fastCounter = fastCounter + 'd1;
-			if (rstSample == 10'b1111111111)
-				rstOut = 1;
-			else
-				rstOut = 0;
-			if (PAUSESample == 10'b1111111111)
-				PAUSEOut = ~PAUSEOut;
-	 end*/
-     
+	 wire clkOut;
+    wire newGame;
+
+	 
    wire [17:0] clk_dv_inc;
 
    reg [16:0]  clk_dv;
@@ -81,8 +61,23 @@ module master(
    reg         clk_en_d;
       
    reg [7:0]   inst_wd;
-   reg         inst_vld;
-   reg [2:0]   step_d;
+   reg         inst_vldR;
+	reg         inst_vldM;
+	reg         inst_vldL;
+	reg         inst_vldU;
+	reg         inst_vldD;
+   reg [2:0]   step_dR;
+	reg [2:0]   step_dM;
+	reg [2:0]   step_dL;
+	reg [2:0]   step_dU;
+	reg [2:0]   step_dD;
+	reg rOut = 0;
+	reg mOut = 0;
+	reg lOut = 0;
+	reg uOut = 0;
+	reg dOut = 0;
+	
+	
 
    // ===========================================================================
    // 763Hz timing signal for clock enable
@@ -112,33 +107,76 @@ module master(
      if (rst)
        begin
           //inst_wd[7:0] <= 0;
-          step_d[2:0]  <= 0;
+          step_dR[2:0]  <= 0;
+			 step_dM[2:0]  <= 0;
+			 step_dL[2:0]  <= 0;
+			 step_dU[2:0]  <= 0;
+			 step_dD[2:0]  <= 0;
        end
      else if (clk_en)
        begin
           //inst_wd[7:0] <= sw[7:0]; // give the next instruction
-          step_d[2:0]  <= {PAUSE, step_d[2:1]};
+          step_dR[2:0]  <= {btnR, step_dR[2:1]};
+			 step_dM[2:0]  <= {btnR, step_dM[2:1]};
+			 step_dL[2:0]  <= {btnR, step_dL[2:1]};
+			 step_dU[2:0]  <= {btnR, step_dU[2:1]};
+			 step_dD[2:0]  <= {btnR, step_dD[2:1]};
        end
 
    always @ (posedge clk)
      if (rst)
-       inst_vld <= 1'b0;
+	  begin
+       inst_vldR <= 1'b0;
+		 inst_vldM <= 1'b0;
+		 inst_vldL <= 1'b0;
+		 inst_vldU <= 1'b0;
+		 inst_vldD <= 1'b0;
+	  end
      else
-       inst_vld <= ~step_d[0] & step_d[1] & clk_en_d;
+	  begin
+       inst_vldR <= ~step_dR[0] & step_dR[1] & clk_en_d;
+		 inst_vldM <= ~step_dM[0] & step_dM[1] & clk_en_d;
+		 inst_vldL <= ~step_dL[0] & step_dL[1] & clk_en_d;
+		 inst_vldU <= ~step_dU[0] & step_dU[1] & clk_en_d;
+		 inst_vldD <= ~step_dD[0] & step_dD[1] & clk_en_d;
+	  end
        
    always @ (posedge clk)
     begin
-        if (inst_vld)
-        begin
-            PAUSEOut = ~PAUSEOut;
-        end
+        if (inst_vldR)
+				rOut <= 1;
+		  else
+				rOut <= 0;
+		  if (inst_vldM)
+				mOut <= 1;
+		  else
+				mOut <= 0;
+		  if (inst_vldL)
+				lOut <= 1;
+		  else
+				lOut <= 0;
+		  if (inst_vldU)
+				uOut <= 1;
+		  else
+				uOut <= 0;
+		  if (inst_vldD)
+				dOut <= 1;
+		  else
+				dOut <= 0;
     end   
        
+	 always @ (posedge clk)
+	 begin
+		if (btnR || btnL || btnM || btnU || btnD)
+			random <= random + 1;
+	 end
+		 
+    assign led = sw;
 	 
     masterCLK myCLK (
-	     // inputs
-         .clk (clk),
-		 .rst (rst),
+	      // inputs
+          .clk (clk),
+		    .rst (rst),
 		  
 		  //outputs
           .clock0 (clock0),      // .71 Hz
@@ -150,9 +188,77 @@ module master(
           .clock6 (clock6),      // 5Hz
     
           .clockScroll(clockScroll), // 2Hz
-          .clockFast(clockFast),   // 500 Hz
-          .clockBlink(clockBlink)   //   3 Hz
+          .clockFast(clockFast),     // 500 Hz
+          .clockBlink(clockBlink),   //   3 Hz
+          .clockInit(clockInit)      // 50 Hz
         );
+ 
+ 
+    levels theLevels(
+        //inputs
+        .clk(clk), 
+        //input rst,
+        .sw (sw),
+    
+        .clock0(clock0),      // .71 Hz
+        .clock1(clock1),      // .833 Hz
+        .clock2(clock2),      // 1 Hz
+        .clock3(clock3),      // 1.25 Hz
+        .clock4(clock4),      // 1.66 Hz
+        .clock5(clock5),      // 2.5 Hz
+        .clock6(clock6),      // 5Hz
+        // output
+        .validStart(validStart),
+        .clkOut(clkOut)
+    );
+    
+    mainMenu mm(
+        //input
+        .clk (clk),
+        .rst (rst),
+        .btnM (mOut),
+        .btnR(rOut),
+        .btnL(lOut),
+        .validStart(validStart),
+        .prevState (state),
+		  .newGame(newGame),
+        // output
+        .state(state)
+    
+    );
+	 /*
+    welcome w(
+        // input
+        .clockFast(clockFast),
+        .clockScroll(clockScroll),
+		  .state(state),
+        // output
+        .an (an),
+        .out (out)
+    );*/
+        
+	gameplay gp(
+	 // input
+    .clk(clkOut),
+	 .clockScroll(clockScroll),
+	 .clk1Hz(clock2),
+    .clkInit(clockInit),
+    .state(state),
+	 .random(random),
+    
+	 .btnR(rOut),
+	 .btnM(mOut),
+	 .btnL(lOut),
+	 .btnU(uOut),
+	 .btnD(dOut),
+	 .hint(sw[7]),
+	 
+	 .clockFast(clockFast),
+	 // output
+    .an(an),
+    .out(out),
+	 .newGame(newGame)
+    );		
  
 			
 

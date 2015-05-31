@@ -103,6 +103,7 @@ module tb(
         .state(state)
     
     );
+	 /*
     welcome w(
         // input
         .clockFast(clockFast),
@@ -112,10 +113,11 @@ module tb(
         .an (an),
         .out (out)
     );
-        
+    */
 	gameplay gp(
 	 // input
     .clk(clkOut),
+	 .clockScroll(clockScroll),
 	 .clk1Hz(clock2),
     .clkInit(clockInit),
     .state(state),
@@ -126,6 +128,7 @@ module tb(
 	 .btnL(btnL),
 	 .btnU(btnU),
 	 .btnD(btnD),
+	 .hint(sw[7]),
 	 
 	 .clockFast(clockFast),
 	 // output
@@ -144,7 +147,7 @@ module tb(
     
     initial begin
           btnR = 0;
-          btnM = 1;
+          btnM = 0;
           btnL = 0;
 			 btnU = 0;
 			 btnD = 0;
@@ -165,7 +168,7 @@ module tb(
           btnL = 1;
           #50000
           btnL = 0;
-           
+			  
           #50000000
 			 btnM = 1;
 			 #500000

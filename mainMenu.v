@@ -50,7 +50,7 @@ module mainMenu(
                                 state <= 2'b10; // high score
                             else
                                 state <= prevState;
-                            // scrolling logic handled in welcome.v
+                            // scrolling logic handled in gameplay.v under welcome
                         end
                     2'b01: // game start
                         begin
