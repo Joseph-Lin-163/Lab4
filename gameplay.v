@@ -19,29 +19,36 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module gameplay(
-    input clk, // clk from the appropriate level speed
-	 input clk1Hz,
-    input clkInit,
+	// Clocks
+    input clk, 			// Determined by level
+	input clk1Hz, 		// May not need
+    input clkInit, 		// To set up the instructions
+    input clockFast, 	// 500 Hz, cnt == 500 for 1 second
+
+    // States + random
     input [1:0] state,
     input [1:0] random,
-	 input btnR,
-	 input btnM,
-	 input btnL,
-	 input btnU,
-	 input btnD,
+
+    // Buttons
+	input btnR,
+	input btnM,
+	input btnL,
+	input btnU,
+	input btnD,
 	 
-    input clockFast,
+    // Outputs
     output reg [3:0] an,
     output reg [6:0] out,
-	 output reg newGame
+	output reg newGame
 
     );
     
 
-	 // manages the reset to main-menu after a player ends their game
-	 integer i = 0;
-	 always @ (posedge clkInit)
-	 begin
+	// manages the reset to main-menu after a player ends their game
+	// QUESTION: So we count to 10 and reset to main menu?
+	integer i = 0;
+	always @ (posedge clkInit)
+	begin
 		if (newGame == 1)
 		begin
 			if (i == 10)
@@ -52,9 +59,9 @@ module gameplay(
 			else
 				i <= i + 1;
 		end
-	 end
+	end
 	 
-	 
+	// Block memory variable declarations
     reg [27:0] assigne [49:0]; // 2D array
     integer index = 0;
     reg [7:0] sel0 = 0 * 'b110010; // 50 offset
@@ -62,25 +69,9 @@ module gameplay(
     reg [7:0] sel2 = 2 * 'b110010; // 50 offset
     reg [7:0] sel3 = 3 * 'b110010; // 50 offset
     wire [27:0] outa0;
-	 wire [27:0] outa1;
-	 wire [27:0] outa2;
-	 wire [27:0] outa3;
-
-	/******************** BEGIN JO ********************/
-
-	// Use a 28 wide by 4 depth array to store the high score information
-	reg [27:0] highScore [0:3] = { 
-	28'b0001001100111110000100001001, // HIGH
-	28'b0010010100011010000001001100, // SCOR
-	28'b0100000010000001000001111111, // AAA
-	28'b1000000100000010000001000000  // 0000
-	};
-
-	// Use a reg named hsCount to cycle through highScore
-	reg [1:0] hsCount = 2'b00;
-
-	/********************  END JO  ********************/
-
+	wire [27:0] outa1;
+	wire [27:0] outa2;
+	wire [27:0] outa3;
 
     block_mem bm0(
         .clka(clk),
@@ -110,8 +101,23 @@ module gameplay(
         .dina(28'b0),
         .douta(outa3)
     );
+
+    /******************** BEGIN JO ********************/
+
+	// Use a 28 wide by 4 depth array to store the high score information
+	reg [27:0] highText = 28'b0001001100111110000100001001; // HIGH
+	reg [27:0] scorText = 28'b0010010100011010000001001100; // SCOR
+	reg [27:0] nameText = 28'b0100000010000001000001111111; // AAA
+	reg [27:0] hsvalueText = 28'b1000000100000010000001000000;  // 0000
+	
+
+	// Use a reg named hsCount to cycle through highScore
+	// Maybe
+	reg [1:0] hsCount = 2'b00;
+
+	/********************  END JO  ********************/
 	 
-	 reg gameOver = 0;
+	reg gameOver = 0;
 		 
     // grabbing the pattern from block memory at the start
     always @ (posedge clkInit) begin
@@ -154,11 +160,15 @@ module gameplay(
 	// Use a 1 Hz clock
 	// Use a simple counter to go through the states
 	
+	/*
+
+	Can't use this block of code because changing out and an needs to occur
+	in only one always block. Leaving here for reference.
+
 	always @ (posedge clk1Hz) begin
 		if (hsCount == 2'b00) begin
-		/*
 			out <= 'b1111111;
-			an <= 'b1111;*/ // we can't change out and an in another always block
+			an <= 'b1111; // we can't change out and an in another always block
 			hsCount <= 2'b01;
 		end
 		else if (hsCount == 2'b01) begin
@@ -173,19 +183,24 @@ module gameplay(
 		end
 	end
 
+	*/
+
 	/********************  END JO  ********************/
 	 
-	 reg display = 1;
-	 reg on = 0;
-	 reg [5:0] loop = 'b000000;
-	 reg [5:0] max = 'b000101; // TODO: change back when testing done
-	 reg [27:0] msg = 'b1111111111111111111111111111;	// blank initial message
-	 integer timer = 3;
-	 reg allCorrect = 0;
-	 reg [1:0] quickPause = 'b10;
-	 reg newRd = 0;
-	 reg timeUp = 0;
-	 reg mistake = 0;
+
+
+
+	reg display = 1;
+	reg on = 0;
+	reg [5:0] loop = 'b000000;
+	reg [5:0] max = 'b000101; // TODO: change back when testing done
+	reg [27:0] msg = 'b1111111111111111111111111111;	// blank initial message
+	integer timer = 3;
+	reg allCorrect = 0;
+	reg [1:0] quickPause = 'b10;
+	reg newRd = 0;
+	reg timeUp = 0;
+	reg mistake = 0;
 
 	 
 	 // handles going through the pattern at the appropriate clock speed
@@ -367,81 +382,78 @@ module gameplay(
 
 	 // handles all displaying to Seven Seg Display
 	 always @ (posedge clockFast) begin
-	 if (state == 'b01 && index < 50)
-	 begin
+	 	if (state == 'b01 && index < 50)
+	 	begin
 			out <= 'b1111111;
 			an <= 'b1111;
-	 end
-	 else if (state == 'b10)
-	 begin
+	 	end
+	 	else if (state == 'b10)
+	 	begin
 			// TODO for Jo:
 		   // put in the display logic here for the main menu High score stuff
-	 end
-	 else if (gameOver == 1)
-	 begin
+	 	end
+	 	else if (gameOver == 1)
+	 	begin
 			// TODO for Jo:
 			// put in the display logic here for the High score stuff at a game over
-	 end
+	 	end
 		else if (on == 0)
-		  begin
-				if (display == 1)		// displaying pattern
-				begin
-					out <= 7'b1111111;	// blank
-					an <= 4'b1111;
-				end
-				else						// player inputting pattern
-				begin
-					case(cnt)
-        
-					'b00: begin
-								out <= msg[6:0];
-								an <= 4'b1110;
-								cnt <= cnt + 1;
-							end
-					'b01: begin
-								out <= msg[13:7];
-								an <= 4'b1101;
-								cnt <= cnt + 1;
-							end
-					'b10: begin
-								out <= msg[20:14];
-								an <= 4'b1011;
-								cnt <= cnt + 1;
-							end
-					'b11: begin
-								out <= msg[27:21];
-								an <= 4'b0111;
-								cnt <= cnt + 1;
-							end
-					endcase
-				end
-		  end
-		  else	// displaying pattern the user must copy
-		  begin
+		begin
+			if (display == 1)		// displaying pattern
+			begin
+				out <= 7'b1111111;	// blank
+				an <= 4'b1111;
+			end
+			else						// player inputting pattern
+			begin
 				case(cnt)
-        
-				'b00: begin
-							out <= assigne[loop][6:0];
-							an <= 4'b1110;
-							cnt <= cnt + 1;
-						end
-				'b01: begin
-							out <= assigne[loop][13:7];
-							an <= 4'b1101;
-							cnt <= cnt + 1;
-						end
-				'b10: begin
-							out <= assigne[loop][20:14];
-							an <= 4'b1011;
-							cnt <= cnt + 1;
-						end
-				'b11: begin
-							out <= assigne[loop][27:21];
-							an <= 4'b0111;
-							cnt <= cnt + 1;
-						end
-              
+					'b00: begin
+						out <= msg[6:0];
+						an <= 4'b1110;
+						cnt <= cnt + 1;
+					end
+					'b01: begin
+						out <= msg[13:7];
+						an <= 4'b1101;
+						cnt <= cnt + 1;
+					end
+					'b10: begin
+						out <= msg[20:14];
+						an <= 4'b1011;
+						cnt <= cnt + 1;
+					end
+					'b11: begin
+						out <= msg[27:21];
+						an <= 4'b0111;
+						cnt <= cnt + 1;
+					end
 				endcase
+			end
+		end
+		else	// displaying pattern the user must copy
+		begin
+			case(cnt)
+				'b00: begin
+					out <= assigne[loop][6:0];
+					an <= 4'b1110;
+					cnt <= cnt + 1;
+				end
+				'b01: begin
+					out <= assigne[loop][13:7];
+					an <= 4'b1101;
+					cnt <= cnt + 1;
+				end
+				'b10: begin
+					out <= assigne[loop][20:14];
+					an <= 4'b1011;
+					cnt <= cnt + 1;
+				end
+				'b11: begin
+					out <= assigne[loop][27:21];
+					an <= 4'b0111;
+					cnt <= cnt + 1;
+				end
+			endcase
 	    end
 	 end
 
