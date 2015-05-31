@@ -57,29 +57,29 @@ int main() {
 		//for (int j = 0; j < 1400; j+= 28) {
 			int choose = rand() % 5;
 			if (choose == 0) {
-				cout << mid << ",";
+				cout << mid;
 			}
 			else if (choose == 1) {
-				cout << rite << ",";
+				cout << rite;
 			}
 			else if (choose == 2) {
-				cout << left << ",";
+				cout << left;
 			}
 			else if (choose == 3) {
-				cout << down << ",";
+				cout << down;
 			}
 			else {
-				cout << up << ",";
+				cout << up;
 			}
 		//}
 		
-		/*
-		if (i < 14)
+		
+		if (i < 199)
 			cout << ",\n";
 		else
-			cout << "\n";
-		*/
-		cout << "\n";
+			cout << ";";
+		
+		//cout << "\n";
 	}
 
 	return 0;
