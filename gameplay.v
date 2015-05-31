@@ -94,6 +94,7 @@ module gameplay(
 		end
 	 end
     
+	 reg gameOver = 0;
 	 
 	 // TODO for Jo: 
 	 // The player is in the main menu screen and they just pushed button R to navigate
@@ -168,6 +169,7 @@ module gameplay(
 						else // ran out of time
 						begin
 							timeUp <= 1;
+							gameOver <= 1;
 							// high score = max - 1
 							// reset values
 						end
@@ -268,6 +270,18 @@ module gameplay(
 		end
 	 end
 	 
+	 
+	 // TODO for Jo:
+	 // the player just lost so you need to input the logic for checking their high score against the current
+	 // high score and have them input their initials
+	 /*
+	 always @ (posedge ) 
+	 if (gameOver == 1)
+	 begin
+	 
+	 end
+	 */
+	 
 	 reg [1:0] cnt = 'b00;
 
 	 // handles all displaying to Seven Seg Display
@@ -276,6 +290,16 @@ module gameplay(
 	 begin
 			out <= 'b1111111;
 			an <= 'b1111;
+	 end
+	 else if (state == 'b10)
+	 begin
+			// TODO for Jo:
+		   // put in the display logic here for the main menu High score stuff
+	 end
+	 else if (gameOver == 1)
+	 begin
+			// TODO for Jo:
+			// put in the display logic here for the High score stuff at a game over
 	 end
 		else if (on == 0)
 		  begin
