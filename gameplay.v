@@ -46,6 +46,25 @@ module gameplay(
 	 wire [27:0] outa2;
 	 wire [27:0] outa3;
 
+	/******************** BEGIN JO ********************/
+
+	// Use a 28 wide by 4 depth array to store the high score information
+	reg [27:0] highScore [3:0];
+
+	// Initialize the highScore information
+	highScore[0] = 28'b0001001100111110000100001001; // HIGH
+	highScore[1] = 28'b0010010100011010000001001100; // SCOR
+	highScore[2] = 28'b0100000010000001000001111111; // AAA
+	highScore[3] = 28'b1000000100000010000001000000; // 0000
+
+	// Use a reg named hsCount to cycle through highScore
+	reg [1:0] hsCount;
+
+	// Initialize hsCount to 00
+	hsCount = 2'b00;
+
+	/********************  END JO  ********************/
+
 
     block_mem bm0(
         .clka(clk),
@@ -107,6 +126,31 @@ module gameplay(
 	  begin
 			// logic here
 	  end
+
+	/******************** BEGIN JO ********************/
+
+	// Use a 1 Hz clock
+	// Use a simple counter to go through the states
+	
+	always @ (posedge clk1Hz) begin
+		if (hsCount == 2'b00) begin
+			out <= 'b1111111;
+			an <= 'b1111;
+			hsCount <= 2'b01;
+		end
+		else if (hsCount == 2'b01) begin
+
+			hsCount <= 2'b10;
+		end
+		else if (hsCount == 2'b10) begin
+			hsCount <= 2'b11;
+		end
+		else begin
+			hsCount <= 2'b00;
+		end
+	end
+
+	/********************  END JO  ********************/
 	 */
 	 reg display = 1;
 	 reg on = 0;
