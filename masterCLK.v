@@ -83,7 +83,7 @@ module masterCLK(
                 
                 counterScroll <= 'd0;
                 counterBlink <= 'd0;
-				fastCounter <= 'd0;
+				    fastCounter <= 'd0;
                 counterInit <= 'd0;
 					 
             end
