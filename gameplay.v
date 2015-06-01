@@ -872,6 +872,43 @@ module gameplay(
 				        endcase
 				    end
 				    b'110:
+				    
+				    /* Josh: so the clock here is already fast enough so you could put the code here or in another
+				     always block to keep things more organized, I would do the latter for readability. I imagine it
+				     would look something like:
+				     always @(posedge clockFast) begin
+				     if (gameOver == 1)
+				     begin
+				     	case(letterSel)
+				     		'b00000: begin
+				     			  letter <= 'b0100000; // A
+				     			  end
+				                'b00001: //all the others
+				                // ...
+				                endcase
+				                if (letterSel == 'b000000 && btnD == 1)
+				                	letterSel <= ('b11010); // last letter
+				                else if (btnU == 1 && btnUPrev == 0) // prev is so you don't sweep through the letters
+				                			 	// really fast through one button push
+				                begin
+				                	letterSel <= letterSel + 1;
+				                	btnUPrev <= 1;
+				                end
+				                
+				                if (btnU == 0)
+				                	btnUPrev <= 0;
+				                	
+				                // do the same for btnD
+				       end
+				     end
+				     
+				     // inside the display do something like
+				     if (clockBlink == 1)
+				     	out <= 'b1111111; // blank
+				     else
+				     	out <= letter;
+				     */
+				     
 				    begin
 				    	case(cnt)        
 				        	'b00: begin
@@ -880,6 +917,7 @@ module gameplay(
 				      	        cnt <= cnt + 1;
 							end
 				        	'b01: begin
+				        	// out <= letter; // change to take in the variable you're selecting from above
 				                out <= 'b0100000; // A
 				                an <= 4'b1101;
 				                cnt <= cnt + 1;
