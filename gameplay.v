@@ -58,6 +58,20 @@ module gameplay(
 	// newGame down in the code below because we can't change it in more than one place.
 	// just handle it below and know that we need to set newGame to reset to the main menu
 	// and then turn newGame off after we've switched
+	/*
+
+	Joseph:
+	I'm commenting this out for safety.
+	I have a newGameFlag set in my high score work.
+	When the person pressed the middle button to signify they are done inputting their initials,
+	the newGameFlag is set to 1. During that time, gameOver needs to be set to 0.
+	If I need to reset newGameFlag to 0, I can visit the same always block that contains the 
+	assignment of newGameFlag and make a case for gameOver == 0 && newGameFlag == 1 to reset
+	newGameFlag back to 0.
+
+	TODO: Josh, I need your input on where to place the logic below. I'm a bit brain dead right
+	now and I think I had better consult you for your idea on the code architecture.
+
 	integer i = 0;
 	always @ (posedge clkInit)
 	begin
@@ -74,7 +88,8 @@ module gameplay(
 			end
 		end
 	end
-	 
+	*/ 
+
 	// Block memory variable declarations
     reg [27:0] assigne [49:0]; // 2D array
     integer index = 0;
@@ -126,10 +141,10 @@ module gameplay(
 	reg [6:0] nameText0 = 7'b0100000;
 	reg [6:0] nameText1 = 7'b0100000;
 	reg [6:0] nameText2 = 7'b0100000;
-	reg [6:0] nameText3 = 7'b1111111; 
+	//reg [6:0] nameText3 = 7'b1111111; 
 
-	reg [6:0] hsvalueText0 = 7'b1000000;
-	reg [6:0] hsvalueText1 = 7'b1000000;
+	//reg [6:0] hsvalueText0 = 7'b1000000;
+	//reg [6:0] hsvalueText1 = 7'b1000000;
 	reg [6:0] hsvalueText2 = 7'b1000000;
 	reg [6:0] hsvalueText3 = 7'b1000000;
 
@@ -164,6 +179,42 @@ module gameplay(
 	// Temporary hsvalueText
 	reg [6:0] temphsvalueText2 = 7'b1000000; // ten's column
 	reg [6:0] temphsvalueText3 = 7'b1000000; // one's column
+
+	// Initialize a var to keep track of which initial I'm on
+	reg [1:0] trackInitial = 2'b00;
+	reg [4:0] letterSel = 5'b00000;
+
+	// Initialize a flag to let the game know to move back to the newGame
+	reg [0:0] newGameFlag = 'b0;
+
+	// Initialize the alphabet
+	reg [6:0] alphabet0 = 7'b0100000;
+	reg [6:0] alphabet1 = 7'b0000011;
+	reg [6:0] alphabet2 = 7'b1000110;
+	reg [6:0] alphabet3 = 7'b0100001;
+	reg [6:0] alphabet4 = 7'b0000110;
+	reg [6:0] alphabet5 = 7'b0001110;
+	reg [6:0] alphabet6 = 7'b1000010;
+	reg [6:0] alphabet7 = 7'b0001001;
+	reg [6:0] alphabet8 = 7'b1001111;
+	reg [6:0] alphabet9 = 7'b1100001;
+	reg [6:0] alphabet10 = 7'b0001010;
+	reg [6:0] alphabet11 = 7'b1000111;
+	reg [6:0] alphabet12 = 7'b1101010;
+	reg [6:0] alphabet13 = 7'b1001000;
+	reg [6:0] alphabet14 = 7'b1000000;
+	reg [6:0] alphabet15 = 7'b0001100;
+	reg [6:0] alphabet16 = 7'b0011000;
+	reg [6:0] alphabet17 = 7'b1001100;
+	reg [6:0] alphabet18 = 7'b0010010;
+	reg [6:0] alphabet19 = 7'b0000111;
+	reg [6:0] alphabet20 = 7'b1000001;
+	reg [6:0] alphabet21 = 7'b1010001;
+	reg [6:0] alphabet22 = 7'b1010101;
+	reg [6:0] alphabet23 = 7'b0001001;
+	reg [6:0] alphabet24 = 7'b0010001;
+	reg [6:0] alphabet25 = 7'b0110100;
+	
 
 	/********************  END JO  ********************/
 	 
@@ -426,7 +477,7 @@ module gameplay(
 	 // high score and have them input their initials
 	 /*
 	 always @ (posedge ) 
-	 if (gameOver == 1)
+	 if (gameOver == 1 )
 	 begin
 	 
 	 
@@ -524,6 +575,3808 @@ module gameplay(
 	 
 	 
 	reg [1:0] cnt = 'b00;
+
+				/* Josh: so the clock here is already fast enough so you could put the code here or in another
+				     always block to keep things more organized, I would do the latter for readability. I imagine it
+				     would look something like:
+				     always @(posedge clockFast) begin
+				     if (gameOver == 1)
+				     begin
+				     	case(letterSel)
+				     		'b00000: begin
+				     			  letter <= 'b0100000; // A
+				     			  end
+				                'b00001: //all the others
+				                // ...
+				                endcase
+				                if (letterSel == 'b000000 && btnD == 1)
+				                	letterSel <= ('b11010); // last letter
+				                else if (btnU == 1 && btnUPrev == 0) // prev is so you don't sweep through the letters
+				                			 	// really fast through one button push
+				                begin
+				                	letterSel <= letterSel + 1;
+				                	btnUPrev <= 1;
+				                end
+				                
+				                if (btnU == 0)
+				                	btnUPrev <= 0;
+				                	
+				                // do the same for btnD
+				       end
+				     end
+				     
+				     // inside the display do something like
+				     if (clockBlink == 1)
+				     	out <= 'b1111111; // blank
+				     else
+				     	out <= letter;
+				     	*/
+
+
+	reg [0:0] btnDPrev = 'b0;
+	reg [0:0] btnUPrev = 'b0;
+	reg [0:0] btnRPrev = 'b0;
+	reg [0:0] btnMPrev = 'b0;
+	reg [0:0] btnLPrev = 'b0;
+
+	// handles inputting the name
+	always @ (posedge clockFast) 
+	begin
+		// Don't allow change unless gameOver + score >= oldhs + newhsTextSel is showing initials
+		if (gameOver == 1 && score >= oldhs && newhsTextSel == b'110) begin
+			case(trackInitial)
+				b'00:
+				begin
+					case (letterSel)
+						'b00000:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText0 <= alphabet1;
+								btnDPrev <= 'b1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								trackInitial <= trackInitial + 1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+						end
+						'b00001:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText0 <= alphabet2;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText0 <= alphabet0;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;								
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+						end
+						'b00010:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText0 <= alphabet3;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText0 <= alphabet1;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+						end
+						'b00011:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText0 <= alphabet4;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText0 <= alphabet2;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+						end
+						'b00100:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText0 <= alphabet5;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText0 <= alphabet3;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+						end
+						'b00101:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText0 <= alphabet6;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText0 <= alphabet4;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+						end
+						'b00110:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText0 <= alphabet7;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText0 <= alphabet5;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+						end
+						'b00111:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText0 <= alphabet8;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText0 <= alphabet6;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+						end
+						'b01000:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText0 <= alphabet9;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText0 <= alphabet7;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+						end
+						'b01001:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText0 <= alphabet10;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText0 <= alphabet8;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+						end
+						'b01010:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText0 <= alphabet11;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText0 <= alphabet9;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+						end
+						'b01011:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText0 <= alphabet12;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText0 <= alphabet10;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+						end
+						'b01100:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText0 <= alphabet13;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText0 <= alphabet11;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+						end
+						'b01101:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText0 <= alphabet14;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText0 <= alphabet12;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+						end
+						'b01110:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText0 <= alphabet15;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText0 <= alphabet13;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+						end
+						'b01111:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText0 <= alphabet16;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText0 <= alphabet14;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+						end
+						'b10000:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText0 <= alphabet17;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText0 <= alphabet15;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+						end
+						'b10001:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText0 <= alphabet18;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText0 <= alphabet16;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+						end
+						'b10010:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText0 <= alphabet19;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText0 <= alphabet17;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+						end
+						'b10011:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText0 <= alphabet20;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText0 <= alphabet18;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+						end
+						'b10100:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText0 <= alphabet21;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText0 <= alphabet19;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+						end
+						'b10101:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText0 <= alphabet22;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText0 <= alphabet20;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+						end
+						'b10110:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText0 <= alphabet23;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText0 <= alphabet21;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+						end
+						'b10111:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText0 <= alphabet24;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText0 <= alphabet22;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+						end
+						'b11000:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText0 <= alphabet25;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText0 <= alphabet23;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+						end
+						'b11001:
+						begin							
+							if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText0 <= alphabet24;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+						end
+					endcase
+				end
+				b'01:
+				begin
+					case (letterSel)
+						'b00000:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText1 <= alphabet1;
+								btnDPrev <= 'b1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								btnRPrev <= 1;
+								trackInitial <= trackInitial + 1;
+							end							
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial - 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 'b0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;						
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+						end
+						'b00001:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText1 <= alphabet2;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText1 <= alphabet0;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial - 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								btnRPrev <= 1;
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;						
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+						end
+						'b00010:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText1 <= alphabet3;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText1 <= alphabet1;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial - 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								btnRPrev <= 1;
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;						
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+						end
+						'b00011:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText1 <= alphabet4;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText1 <= alphabet2;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial - 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								btnRPrev <= 1;
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;						
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+						end
+						'b00100:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText1 <= alphabet5;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText1 <= alphabet3;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial - 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								btnRPrev <= 1;
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;						
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+						end
+						'b00101:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText1 <= alphabet6;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText1 <= alphabet4;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial - 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								btnRPrev <= 1;
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;						
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+						end
+						'b00110:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText1 <= alphabet7;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText1 <= alphabet5;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial - 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								btnRPrev <= 1;
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;						
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+						end
+						'b00111:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText1 <= alphabet8;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText1 <= alphabet6;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial - 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								btnRPrev <= 1;
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;						
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+						end
+						'b01000:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText1 <= alphabet9;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText1 <= alphabet7;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial - 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								btnRPrev <= 1;
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;						
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+						end
+						'b01001:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText1 <= alphabet10;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText1 <= alphabet8;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial - 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								btnRPrev <= 1;
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;						
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+						end
+						'b01010:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText1 <= alphabet11;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText1 <= alphabet9;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial - 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								btnRPrev <= 1;
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;						
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+						end
+						'b01011:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText1 <= alphabet12;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText1 <= alphabet10;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial - 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								btnRPrev <= 1;
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;						
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+						end
+						'b01100:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText1 <= alphabet13;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText1 <= alphabet11;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial - 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								btnRPrev <= 1;
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;						
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+						end
+						'b01101:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText1 <= alphabet14;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText1 <= alphabet12;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial - 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								btnRPrev <= 1;
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;						
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+						end
+						'b01110:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText1 <= alphabet15;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText1 <= alphabet13;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial - 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								btnRPrev <= 1;
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;						
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+						end
+						'b01111:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText1 <= alphabet16;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText1 <= alphabet14;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial - 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								btnRPrev <= 1;
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;						
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+						end
+						'b10000:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText1 <= alphabet17;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText1 <= alphabet15;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial - 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								btnRPrev <= 1;
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;						
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+						end
+						'b10001:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText1 <= alphabet18;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText1 <= alphabet16;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial - 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								btnRPrev <= 1;
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;						
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+						end
+						'b10010:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText1 <= alphabet19;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText1 <= alphabet17;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial - 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								btnRPrev <= 1;
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;						
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+						end
+						'b10011:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText1 <= alphabet20;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText1 <= alphabet18;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial - 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								btnRPrev <= 1;
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;						
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+						end
+						'b10100:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText1 <= alphabet21;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText1 <= alphabet19;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial - 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								btnRPrev <= 1;
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;						
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+						end
+						'b10101:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText1 <= alphabet22;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText1 <= alphabet20;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial - 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								btnRPrev <= 1;
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;						
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+						end
+						'b10110:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText1 <= alphabet23;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText1 <= alphabet21;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial - 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								btnRPrev <= 1;
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;						
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+						end
+						'b10111:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText1 <= alphabet24;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText1 <= alphabet22;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial - 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								btnRPrev <= 1;
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;						
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+						end
+						'b11000:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText1 <= alphabet25;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText1 <= alphabet23;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial - 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								btnRPrev <= 1;
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;						
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+						end
+						'b11001:
+						begin
+							if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText1 <= alphabet24;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							else if (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial - 1;
+							end
+							else if (btnR == 1 && btnRPrev == 0)
+							begin
+								btnRPrev <= 1;
+								trackInitial <= trackInitial + 1;
+							end
+
+							if (btnR == 0)
+							begin
+								btnRPrev <= 0;
+							end
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;						
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+						end
+					endcase
+				end
+				b'10:
+				begin
+					case (letterSel)
+						'b00000:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText2 <= alphabet1;
+								btnDPrev <= 'b1;
+							end
+							else if (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial - 1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+							if (btnR == 0)
+							begin
+								btnRPrev <= 'b0;
+							end
+						end
+						'b00001:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText2 <= alphabet2;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText2 <= alphabet0;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							elseif (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial -1;								
+							end
+
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+							if (btnR == 0)
+							begin
+								btnRPrev <= 'b0;
+							end
+						end
+						'b00010:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText2 <= alphabet3;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText2 <= alphabet1;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							elseif (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial -1;								
+							end
+
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+							if (btnR == 0)
+							begin
+								btnRPrev <= 'b0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+						end
+						'b00011:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText2 <= alphabet4;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText2 <= alphabet2;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							elseif (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial -1;								
+							end
+
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+							if (btnR == 0)
+							begin
+								btnRPrev <= 'b0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+						end
+						'b00100:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText2 <= alphabet5;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText2 <= alphabet3;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							elseif (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial -1;								
+							end
+
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+							if (btnR == 0)
+							begin
+								btnRPrev <= 'b0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+						end
+						'b00101:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText2 <= alphabet6;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText2 <= alphabet4;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							elseif (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial -1;								
+							end
+							
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+							if (btnR == 0)
+							begin
+								btnRPrev <= 'b0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+						end
+						'b00110:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText2 <= alphabet7;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText2 <= alphabet5;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							elseif (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial -1;								
+							end
+							
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+							if (btnR == 0)
+							begin
+								btnRPrev <= 'b0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+						end
+						'b00111:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText2 <= alphabet8;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText2 <= alphabet6;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							elseif (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial -1;								
+							end
+							
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+							if (btnR == 0)
+							begin
+								btnRPrev <= 'b0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+						end
+						'b01000:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText2 <= alphabet9;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText2 <= alphabet7;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							elseif (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial -1;								
+							end
+							
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+							if (btnR == 0)
+							begin
+								btnRPrev <= 'b0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+						end
+						'b01001:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText2 <= alphabet10;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText2 <= alphabet8;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							elseif (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial -1;								
+							end
+							
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+							if (btnR == 0)
+							begin
+								btnRPrev <= 'b0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+						end
+						'b01010:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText2 <= alphabet11;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText2 <= alphabet9;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							elseif (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial -1;								
+							end
+							
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+							if (btnR == 0)
+							begin
+								btnRPrev <= 'b0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+						end
+						'b01011:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText2 <= alphabet12;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText2 <= alphabet10;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							elseif (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial -1;								
+							end
+
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+							if (btnR == 0)
+							begin
+								btnRPrev <= 'b0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+						end
+						'b01100:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText2 <= alphabet13;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText2 <= alphabet11;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							elseif (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial -1;								
+							end
+
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+							if (btnR == 0)
+							begin
+								btnRPrev <= 'b0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+						end
+						'b01101:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText2 <= alphabet14;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText2 <= alphabet12;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							elseif (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial -1;								
+							end
+							
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+							if (btnR == 0)
+							begin
+								btnRPrev <= 'b0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+						end
+						'b01110:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText2 <= alphabet15;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText2 <= alphabet13;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							elseif (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial -1;								
+							end
+							
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+							if (btnR == 0)
+							begin
+								btnRPrev <= 'b0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+						end
+						'b01111:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText2 <= alphabet16;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText2 <= alphabet14;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							elseif (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial -1;								
+							end
+
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+							if (btnR == 0)
+							begin
+								btnRPrev <= 'b0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+						end
+						'b10000:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText2 <= alphabet17;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText2 <= alphabet15;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							elseif (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial -1;								
+							end
+							
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+							if (btnR == 0)
+							begin
+								btnRPrev <= 'b0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+						end
+						'b10001:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText2 <= alphabet18;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText2 <= alphabet16;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							elseif (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial -1;								
+							end
+
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+							if (btnR == 0)
+							begin
+								btnRPrev <= 'b0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+						end
+						'b10010:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText2 <= alphabet19;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText2 <= alphabet17;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							elseif (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial -1;								
+							end
+							
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+							if (btnR == 0)
+							begin
+								btnRPrev <= 'b0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+						end
+						'b10011:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText2 <= alphabet20;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText2 <= alphabet18;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							elseif (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial -1;								
+							end
+							
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+							if (btnR == 0)
+							begin
+								btnRPrev <= 'b0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+						end
+						'b10100:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText2 <= alphabet21;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText2 <= alphabet19;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							elseif (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial -1;								
+							end
+							
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+							if (btnR == 0)
+							begin
+								btnRPrev <= 'b0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+						end
+						'b10101:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText2 <= alphabet22;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText2 <= alphabet20;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							elseif (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial -1;								
+							end
+							
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+							if (btnR == 0)
+							begin
+								btnRPrev <= 'b0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+						end
+						'b10110:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText2 <= alphabet23;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText2 <= alphabet21;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							elseif (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial -1;								
+							end
+							
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+							if (btnR == 0)
+							begin
+								btnRPrev <= 'b0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+						end
+						'b10111:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText2 <= alphabet24;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText2 <= alphabet22;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							elseif (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial -1;								
+							end
+
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+							if (btnR == 0)
+							begin
+								btnRPrev <= 'b0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+						end
+						'b11000:
+						begin
+							if (btnD == 1 && btnDPrev == 0)
+							begin
+								letterSel <= letterSel + 1;
+								nameText2 <= alphabet25;
+								btnDPrev <= 'b1;
+							end
+							else if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText2 <= alphabet23;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							elseif (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial -1;								
+							end
+							
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+							if (btnR == 0)
+							begin
+								btnRPrev <= 'b0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+						end
+						'b11001:
+						begin							
+							if (btnU == 1 && btnUPrev == 0)
+							begin
+								letterSel <= letterSel - 1;
+								nameText2 <= alphabet24;
+								btnUPrev <= 'b1;
+							end
+							elseif (btnM == 1 && btnMPrev == 0)
+							begin
+								btnMPrev <= 1;
+								newGameFlag <= 1;
+							end
+							elseif (btnL == 1 && btnLPrev == 0)
+							begin
+								btnLPrev <= 1;
+								trackInitial <= trackInitial -1;								
+							end
+							
+							if (btnL == 0)
+							begin
+								btnLPrev <= 'b0;
+							end
+							if (btnR == 0)
+							begin
+								btnRPrev <= 'b0;
+							end
+							if (btnM == 0)
+							begin
+								newGameFlag <= 0;
+								btnMPrev <= 'b0;
+							end
+							if (btnU == 0)
+							begin
+								btnUPrev <= 'b0;
+							end
+							if (btnD == 0)
+							begin
+								btnDPrev <= 'b0;
+							end
+						end
+					endcase
+				end
+			endcase
+		end
+	end
 
 	// handles all displaying to Seven Seg Display
 	always @ (posedge clockFast) begin
@@ -714,7 +4567,7 @@ module gameplay(
 						(Score)
 			*/
 
-			if (score > oldhs)
+			if (score >= oldhs)
 			begin
 				oldhs = score;
 				hsvalueText2 = temphsvalueText2;
@@ -871,44 +4724,7 @@ module gameplay(
 				            end             
 				        endcase
 				    end
-				    b'110:
-				    
-				    /* Josh: so the clock here is already fast enough so you could put the code here or in another
-				     always block to keep things more organized, I would do the latter for readability. I imagine it
-				     would look something like:
-				     always @(posedge clockFast) begin
-				     if (gameOver == 1)
-				     begin
-				     	case(letterSel)
-				     		'b00000: begin
-				     			  letter <= 'b0100000; // A
-				     			  end
-				                'b00001: //all the others
-				                // ...
-				                endcase
-				                if (letterSel == 'b000000 && btnD == 1)
-				                	letterSel <= ('b11010); // last letter
-				                else if (btnU == 1 && btnUPrev == 0) // prev is so you don't sweep through the letters
-				                			 	// really fast through one button push
-				                begin
-				                	letterSel <= letterSel + 1;
-				                	btnUPrev <= 1;
-				                end
-				                
-				                if (btnU == 0)
-				                	btnUPrev <= 0;
-				                	
-				                // do the same for btnD
-				       end
-				     end
-				     
-				     // inside the display do something like
-				     if (clockBlink == 1)
-				     	out <= 'b1111111; // blank
-				     else
-				     	out <= letter;
-				     */
-				     
+				    b'110:				 				     
 				    begin
 				    	case(cnt)        
 				        	'b00: begin
@@ -918,17 +4734,17 @@ module gameplay(
 							end
 				        	'b01: begin
 				        	// out <= letter; // change to take in the variable you're selecting from above
-				                out <= 'b0100000; // A
+				                out <= nameText2; 
 				                an <= 4'b1101;
 				                cnt <= cnt + 1;
 							end
 				        	'b10: begin				        	
-				                out <= 'b0100000; // A
+				                out <= nameText1; 
 				                an <= 4'b1011;
 				                cnt <= cnt + 1;
 				            end
 				        	'b11: begin
-				                out <= 'b0100000; // A
+				                out <= nameText0; 
 				                an <= 4'b0111;
 				                cnt <= cnt + 1;
 				            end             
