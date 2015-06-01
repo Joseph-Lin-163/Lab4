@@ -134,9 +134,36 @@ module gameplay(
 	reg [6:0] hsvalueText3 = 7'b1000000;
 
 	// Use a reg named hsCount to cycle through highScore
-	// Maybe
 	reg [8:0] hsCount = 9'b000000000;
 	reg [1:0] textSel = 2'b00;
+
+	// Use a reg named newhsCount to cycle through: NEW HIGH SCOR (score) ENTR NAME AAA
+	reg [8:0] newhsCount = 9'b000000000;
+	reg [2:0] newhsTextSel = 3'b00;
+
+	/*
+		Use a reg named score to keep track of the player's score
+		Each answer the player gets right, they get 1 point
+
+		In addition, for each point the player gets right, please
+		update a temphsvalueText.
+		If score > old high score, we do the following:
+		oldhs = score
+		hsvalueText2 = temphsvalueText2
+		hsvalueText3 = temphsvalueText3
+
+		That way, you can reset score, and temphsvalueText 2 and 3
+		to 0 and 7'b1000000 when the game has reset
+		Also, set hsCount and newhsCount to 0 on reset
+	*/ 
+
+	// Initialize old high score to 0
+	reg [5:0] oldhs = 6'b000000;
+	reg [5:0] score = 6'b000000;
+
+	// Temporary hsvalueText
+	reg [6:0] temphsvalueText2 = 7'b1000000; // ten's column
+	reg [6:0] temphsvalueText3 = 7'b1000000; // one's column
 
 	/********************  END JO  ********************/
 	 
@@ -542,7 +569,7 @@ module gameplay(
 			        	'b00: begin
 			                out <= 'b0001001; // H
 			                an <= 4'b1110;
-			      	       cnt <= cnt + 1;
+			      	       	cnt <= cnt + 1;
 						end
 			        	'b01: begin
 			                out <= 'b1000010; // G
@@ -553,7 +580,7 @@ module gameplay(
 			                out <= 'b1001111; // I
 			                an <= 4'b1011;
 			                cnt <= cnt + 1;
-			               end
+			            end
 			        	'b11: begin
 			                out <= 'b0001001; // H
 			                an <= 4'b0111;
@@ -667,13 +694,13 @@ module gameplay(
 				1. If score > high_score, set high_score = score
 				   Then, change values of hsvalueText 0 through 3 (0 = l, 1 = ml, 2 = mr, 3 = r)
 				   Display:
-						NEW
-						HIGH
-						SCOR
-						(score)
-						ENTR
-						NAME
-						AAA
+						NEW     0
+						HIGH 	1
+						SCOR 	2
+						(score) 3
+						ENTR	4
+						NAME 	5
+						AAA 	6
 							Then, allow user to input their initials
 							(Up = Go backwards in the alphabet)
 							(Down = Go forwards in the alphabet)
@@ -686,6 +713,286 @@ module gameplay(
 						SCOR
 						(Score)
 			*/
+
+			if (score > oldhs)
+			begin
+				oldhs = score;
+				hsvalueText2 = temphsvalueText2;
+				hsvalueText3 = temphsvalueText3;
+
+				case(newhsTextSel)
+			    	'b000:
+			    	begin
+					    case(cnt)        
+				        	'b00: begin
+				                out <= 'b1111111; // Space
+				                an <= 4'b1110;
+				      	       	cnt <= cnt + 1;
+							end
+				        	'b01: begin
+				                out <= 'b1010101; // W
+				                an <= 4'b1101;
+				                cnt <= cnt + 1;
+							end
+				        	'b10: begin
+				                out <= 'b0000110; // E
+				                an <= 4'b1011;
+				                cnt <= cnt + 1;
+				            end
+				        	'b11: begin
+				                out <= 'b1001000; // N
+				                an <= 4'b0111;
+				                cnt <= cnt + 1;
+				            end             
+				        endcase
+				    end
+				    'b001:
+			    	begin
+					    case(cnt)        
+				        	'b00: begin
+				                out <= 'b0001001; // H
+				                an <= 4'b1110;
+				      	       	cnt <= cnt + 1;
+							end
+				        	'b01: begin
+				                out <= 'b1000010; // G
+				                an <= 4'b1101;
+				                cnt <= cnt + 1;
+							end
+				        	'b10: begin
+				                out <= 'b1001111; // I
+				                an <= 4'b1011;
+				                cnt <= cnt + 1;
+				            end
+				        	'b11: begin
+				                out <= 'b0001001; // H
+				                an <= 4'b0111;
+				                cnt <= cnt + 1;
+				            end             
+				        endcase
+				    end
+				    'b010:
+			    	begin
+					    case(cnt)        
+				        	'b00: begin
+				                out <= 'b1001100; // R
+				                an <= 4'b1110;
+				      	        cnt <= cnt + 1;
+							end
+				        	'b01: begin
+				                out <= 'b1000000; // O
+				                an <= 4'b1101;
+				                cnt <= cnt + 1;
+							end
+				        	'b10: begin
+				                out <= 'b1000110; // C
+				                an <= 4'b1011;
+				                cnt <= cnt + 1;
+				            end
+				        	'b11: begin
+				                out <= 'b0010010; // S
+				                an <= 4'b0111;
+				                cnt <= cnt + 1;
+				            end             
+				        endcase
+				    end
+				    b'011:
+				    begin
+				    	case(cnt)        
+				        	'b00: begin
+				                out <= temphsvalueText3; // one's column
+				                an <= 4'b1110;
+				      	        cnt <= cnt + 1;
+							end
+				        	'b01: begin
+				                out <= temphsvalueText2; // ten's column
+				                an <= 4'b1101;
+				                cnt <= cnt + 1;
+							end
+				        	'b10: begin				        	
+				                out <= 'b1000000; // 0
+				                an <= 4'b1011;
+				                cnt <= cnt + 1;
+				            end
+				        	'b11: begin
+				                out <= 'b1000000; // 0 
+				                an <= 4'b0111;
+				                cnt <= cnt + 1;
+				            end             
+				        endcase
+				    end
+				    b'100:
+				    begin
+				    	case(cnt)        
+				        	'b00: begin
+				                out <= 'b1001100; // R
+				                an <= 4'b1110;
+				      	        cnt <= cnt + 1;
+							end
+				        	'b01: begin
+				                out <= 'b0000111; // T
+				                an <= 4'b1101;
+				                cnt <= cnt + 1;
+							end
+				        	'b10: begin				        	
+				                out <= 'b1001000; // N
+				                an <= 4'b1011;
+				                cnt <= cnt + 1;
+				            end
+				        	'b11: begin
+				                out <= 'b0000110; // E
+				                an <= 4'b0111;
+				                cnt <= cnt + 1;
+				            end             
+				        endcase
+				    end
+				    b'101:
+				    begin
+				    	case(cnt)        
+				        	'b00: begin
+				                out <= 'b0000110; // E
+				                an <= 4'b1110;
+				      	        cnt <= cnt + 1;
+							end
+				        	'b01: begin
+				                out <= 'b1101010; // M
+				                an <= 4'b1101;
+				                cnt <= cnt + 1;
+							end
+				        	'b10: begin				        	
+				                out <= 'b0100000; // A
+				                an <= 4'b1011;
+				                cnt <= cnt + 1;
+				            end
+				        	'b11: begin
+				                out <= 'b1001000; // N
+				                an <= 4'b0111;
+				                cnt <= cnt + 1;
+				            end             
+				        endcase
+				    end
+				    b'110:
+				    begin
+				    	case(cnt)        
+				        	'b00: begin
+				                out <= 'b1111111; // Space
+				                an <= 4'b1110;
+				      	        cnt <= cnt + 1;
+							end
+				        	'b01: begin
+				                out <= 'b0100000; // A
+				                an <= 4'b1101;
+				                cnt <= cnt + 1;
+							end
+				        	'b10: begin				        	
+				                out <= 'b0100000; // A
+				                an <= 4'b1011;
+				                cnt <= cnt + 1;
+				            end
+				        	'b11: begin
+				                out <= 'b0100000; // A
+				                an <= 4'b0111;
+				                cnt <= cnt + 1;
+				            end             
+				        endcase
+				    end
+				endcase
+			end
+			else
+			begin
+				case (newTextSel)
+					'b000:
+						case(cnt)        
+				        	'b00: begin
+				                out <= 'b1001100; // R
+				                an <= 4'b1110;
+				      	        cnt <= cnt + 1;
+							end
+				        	'b01: begin
+				                out <= 'b1000001; // U
+				                an <= 4'b1101;
+				                cnt <= cnt + 1;
+							end
+				        	'b10: begin				        	
+				                out <= 'b1000000; // O
+				                an <= 4'b1011;
+				                cnt <= cnt + 1;
+				            end
+				        	'b11: begin
+				                out <= 'b0010001; // Y
+				                an <= 4'b0111;
+				                cnt <= cnt + 1;
+				            end             
+				        endcase
+					begin
+					end
+					'b001:
+					begin
+						case(cnt)        
+				        	'b00: begin
+				                out <= 'b1001100; // R
+				                an <= 4'b1110;
+				      	        cnt <= cnt + 1;
+							end
+				        	'b01: begin
+				                out <= 'b1000000; // O
+				                an <= 4'b1101;
+				                cnt <= cnt + 1;
+							end
+				        	'b10: begin
+				                out <= 'b1000110; // C
+				                an <= 4'b1011;
+				                cnt <= cnt + 1;
+				            end
+				        	'b11: begin
+				                out <= 'b0010010; // S
+				                an <= 4'b0111;
+				                cnt <= cnt + 1;
+				            end             
+				        endcase
+					end
+					'b010:
+					begin
+						case(cnt)        
+				        	'b00: begin
+				                out <= temphsvalueText3; // one's column
+				                an <= 4'b1110;
+				      	        cnt <= cnt + 1;
+							end
+				        	'b01: begin
+				                out <= temphsvalueText2; // ten's column
+				                an <= 4'b1101;
+				                cnt <= cnt + 1;
+							end
+				        	'b10: begin				        	
+				                out <= 'b1000000; // 0
+				                an <= 4'b1011;
+				                cnt <= cnt + 1;
+				            end
+				        	'b11: begin
+				                out <= 'b1000000; // 0 
+				                an <= 4'b0111;
+				                cnt <= cnt + 1;
+				            end             
+				        endcase
+					end
+				endcase
+			end
+
+
+			/*	
+				Cycle through to display NEW, HIGH, SCOR, (score), ENTR, NAME
+				Stops incrementing nshsTextSel at 6
+			*/
+			if (newhsCount != 9'b111111111)
+	        begin
+	        	newhsCount <= newhsCount + 1;
+	        end
+	        else if (newhsTextSel < 6)
+	        begin
+	        	newhsCount <= 9'b000000000;
+	        	newhsTextSel <= newhsTextSel + 1;
+	        end
 		end
 		else if (on == 0)
 		begin
