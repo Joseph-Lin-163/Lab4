@@ -27,7 +27,7 @@ module mainMenu(
     input btnL,
     input validStart,
     input [1:0] prevState,
-    input newGame,
+    input newGameFlag,
 	 
     output reg [1:0] state
     
@@ -35,7 +35,7 @@ module mainMenu(
     
     
     always @ (posedge clk)
-    if (rst || newGame)
+    if (rst || newGameFlag)
     begin
         state <= 2'b00;
     end

@@ -48,7 +48,7 @@ module tb(
     wire [1:0] state;
 	 
 	 wire clkOut;
-    wire newGame;
+    wire newGameFlag;
 	 
     masterCLK myCLK (
 	      // inputs
@@ -98,7 +98,7 @@ module tb(
         .btnL(btnL),
         .validStart(validStart),
         .prevState (state),
-		  .newGame(newGame),
+		  .newGameFlag(newGameFlag),
         // output
         .state(state)
     
@@ -134,7 +134,7 @@ module tb(
 	 // output
     .an(an),
     .out(out),
-	 .newGame(newGame)
+	 .newGameFlag(newGameFlag)
     );		
             
     initial begin
@@ -151,8 +151,8 @@ module tb(
           btnL = 0;
 			 btnU = 0;
 			 btnD = 0;
-          sw = 'b0000001;
-          if (sw == 'b0000001)
+          sw = 'b01111111;
+          if (sw == 'b01111111)
 				random = 'b00;
 			 else
 				random = 'b10;
@@ -197,6 +197,9 @@ module tb(
 			 #10000000
 			 btnM = 0;
 			 #500000000
+             #500000000
+             #500000000
+             #500000000
 		    
     $finish;
     end

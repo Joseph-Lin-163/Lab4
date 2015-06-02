@@ -17,8 +17,8 @@
 // Revision 0.01 - File Created
 // Additional Comments: 
 //
-//////////////////////////////////////////////////////////////////////////////////
 module gameplay(
+//////////////////////////////////////////////////////////////////////////////////
 
 	// Clocks
     input clk, 			// Determined by level
@@ -42,7 +42,7 @@ module gameplay(
     // Outputs
     output reg [3:0] an,
     output reg [6:0] out,
-	output reg newGame
+	output reg newGameFlag
 
     );
     
@@ -71,7 +71,7 @@ module gameplay(
 
 	TODO: Josh, I need your input on where to place the logic below. I'm a bit brain dead right
 	now and I think I had better consult you for your idea on the code architecture.
-
+    
 	integer i = 0;
 	always @ (posedge clkInit)
 	begin
@@ -141,19 +141,19 @@ module gameplay(
 	reg [6:0] nameText0 = 7'b0100000;
 	reg [6:0] nameText1 = 7'b0100000;
 	reg [6:0] nameText2 = 7'b0100000;
-	//reg [6:0] nameText3 = 7'b1111111; 
+	reg [6:0] nameText3 = 7'b1111111; 
 
-	//reg [6:0] hsvalueText0 = 7'b1000000;
-	//reg [6:0] hsvalueText1 = 7'b1000000;
+	reg [6:0] hsvalueText0 = 7'b1000000;
+	reg [6:0] hsvalueText1 = 7'b1000000;
 	reg [6:0] hsvalueText2 = 7'b1000000;
 	reg [6:0] hsvalueText3 = 7'b1000000;
 
 	// Use a reg named hsCount to cycle through highScore
-	reg [8:0] hsCount = 9'b000000000;
+	reg [6:0] hsCount = 5'b00000;
 	reg [1:0] textSel = 2'b00;
-
+ 
 	// Use a reg named newhsCount to cycle through: NEW HIGH SCOR (score) ENTR NAME AAA
-	reg [8:0] newhsCount = 9'b000000000;
+	reg [6:0] newhsCount = 5'b00000;
 	reg [2:0] newhsTextSel = 3'b00;
 
 	/*
@@ -185,7 +185,7 @@ module gameplay(
 	reg [4:0] letterSel = 5'b00000;
 
 	// Initialize a flag to let the game know to move back to the newGame
-	reg [0:0] newGameFlag = 'b0;
+	//reg [0:0] newGameFlag = 'b0;
 
 	// Initialize the alphabet
 	reg [6:0] alphabet0 = 7'b0100000;
@@ -226,7 +226,7 @@ module gameplay(
 		begin
 			index <= 0;
 		end
-		if (state == 'b01 && index < 50) 
+		else if (state == 'b01 && index < 50) 
 		begin
         sel0 <= sel0 + 1; 
 		  sel1 <= sel1 + 1;
@@ -293,11 +293,11 @@ module gameplay(
 	reg display = 1;
 	reg on = 0;
 	reg [5:0] loop = 'b000000;
-	reg [5:0] max = 'b000101; // TODO: change back when testing done
+	reg [5:0] max = 'b001001; 
 	reg [27:0] msg = 'b1111111111111111111111111111;	// blank initial message
 	integer timer = 3;
 	reg allCorrect = 0;
-	reg [1:0] quickPause = 'b10;
+	reg [2:0] quickPause = 'b111;
 	reg newRd = 0;
 	reg timeUp = 0;
 	reg mistake = 0;
@@ -306,12 +306,103 @@ module gameplay(
 	 
 	// handles going through the pattern at the appropriate clock speed
 	always @ (posedge clk) begin
-	if (state == 'b01 && index >= 50) // gameplay
+    if (gameOver == 1 && score > 0 && (textSel == 0 || newhsTextSel == 0))
+    begin
+                                if (score >= 'b010100) // 20
+                                begin
+                                    temphsvalueText2 <= 'b0100100; // 2
+                                    if ((score - 'b010100) == 'b001001) // 9
+                                        temphsvalueText3 <= 'b0011000;
+                                    else if ((score - 'b010100) == 'b001000) // 8
+                                        temphsvalueText3 <= 'b0000000;
+                                    else if ((score - 'b010100) == 'b000111) // 7
+                                        temphsvalueText3 <= 'b1111000;
+                                    else if ((score - 'b010100) == 'b000110) // 6
+                                        temphsvalueText3 <= 'b0000010;
+                                    else if ((score - 'b010100) == 'b000101) // 5
+                                        temphsvalueText3 <= 'b0010010;
+                                    else if ((score - 'b010100) == 'b000100) // 4
+                                        temphsvalueText3 <= 'b0011001;
+                                    else if ((score - 'b010100) == 'b000011) // 3
+                                        temphsvalueText3 <= 'b0110000;
+                                    else if ((score - 'b010100) == 'b000010) // 2
+                                        temphsvalueText3 <= 'b0100100;
+                                    else if ((score - 'b010100) == 'b000001) // 1
+                                        temphsvalueText3 <= 'b1111001;
+                                    else if ((score - 'b010100) == 'b000000) // 0
+                                        temphsvalueText3 <= 'b1000000;
+                                end
+                                else if (score >= 'b001010) // 10
+                                begin
+                                    temphsvalueText2 <= 'b1111001; // 1
+                                    if ((score - 'b001010) == 'b001001) // 9
+                                        temphsvalueText3 <= 'b0011000;
+                                    else if ((score - 'b001010) == 'b001000) // 8
+                                        temphsvalueText3 <= 'b0000000;
+                                    else if ((score - 'b001010) == 'b000111) // 7
+                                        temphsvalueText3 <= 'b1111000;
+                                    else if ((score - 'b001010) == 'b000110) // 6
+                                        temphsvalueText3 <= 'b0000010;
+                                    else if ((score - 'b001010) == 'b000101) // 5
+                                        temphsvalueText3 <= 'b0010010;
+                                    else if ((score - 'b001010) == 'b000100) // 4
+                                        temphsvalueText3 <= 'b0011001;
+                                    else if ((score - 'b001010) == 'b000011) // 3
+                                        temphsvalueText3 <= 'b0110000;
+                                    else if ((score - 'b001010) == 'b000010) // 2
+                                        temphsvalueText3 <= 'b0100100;
+                                    else if ((score - 'b001010) == 'b000001) // 1
+                                        temphsvalueText3 <= 'b1111001;
+                                    else if ((score - 'b001010) == 'b000000) // 0
+                                        temphsvalueText3 <= 'b1000000;
+                                end
+                                else
+                                begin
+                                    if ((score) == 'b001001) // 9
+                                        temphsvalueText3 <= 'b0011000;
+                                    else if ((score) == 'b001000) // 8
+                                        temphsvalueText3 <= 'b0000000;
+                                    else if ((score) == 'b000111) // 7
+                                        temphsvalueText3 <= 'b1111000;
+                                    else if ((score) == 'b000110) // 6
+                                        temphsvalueText3 <= 'b0000010;
+                                    else if ((score) == 'b000101) // 5
+                                        temphsvalueText3 <= 'b0010010;
+                                    else if ((score ) == 'b000100) // 4
+                                        temphsvalueText3 <= 'b0011001;
+                                    else if ((score) == 'b000011) // 3
+                                        temphsvalueText3 <= 'b0110000;
+                                    else if ((score) == 'b000010) // 2
+                                        temphsvalueText3 <= 'b0100100;
+                                    else if ((score) == 'b000001) // 1
+                                        temphsvalueText3 <= 'b1111001;
+                                    else if ((score) == 'b000000) // 0
+                                        temphsvalueText3 <= 'b1000000;
+                                end
+                                
+    end
+    else if (gameOver == 1 && score < oldhs && newhsTextSel >= 'b011)
+    begin
+        gameOver <= 0;
+        max <= 'b000001; 
+        score <= 0;
+        temphsvalueText2 <= 'b1000000;
+        temphsvalueText3 <= 'b1000000;
+    end
+    else if (gameOver == 1 && score >= oldhs && newGameFlag == 1)
+    begin
+        gameOver <= 0;
+        max <= 'b000001; 
+        score <= 0;
+        temphsvalueText2 <= 'b1000000;
+        temphsvalueText3 <= 'b1000000;
+    end
+	 if (state == 'b01 && index >= 50 && gameOver == 0) // gameplay
 			begin
 				if (newRd == 1)
 				begin
 					timer <= 3;
-					quickPause <= 'b10;
+					quickPause <= 'b111;
 					newRd <= 0;
 				end
 			else
@@ -325,7 +416,7 @@ module gameplay(
 						else
 						begin
 							// loop through pattern
-							if (loop < max)
+							if (loop < max - 1) // because on is 1, it will display the final loop even if condition is false
 								loop <= loop + 1;
 							else
 							begin
@@ -369,7 +460,7 @@ module gameplay(
 								prevHint <= 0;
 								display <= 1;
 								gameOver <= 1;
-								// high score = max - 1
+								score <= max - 2;
 							end
 						
 						end
@@ -396,7 +487,7 @@ module gameplay(
 	 
 	 // works in conjunction with the previous always block to grab the player input and verify it against the displayed pattern
 	 always @ (posedge clkInit) begin
-	   if (newRd == 1)
+	   if (newRd == 1 || gameOver == 1)
 		begin
 			verify <= 0;
 			numRight <= 'b000000;
@@ -404,17 +495,18 @@ module gameplay(
 			correct <= 0;
 			allCorrect <= 0;
 			mistake <= 0;
+			msg <= 'b1111111111111111111111111111; // blank
 		end
 		else if (state == 'b01 && display == 0)
 		begin
-			if (numRight == max - 1)
+		   if (timeUp == 1)
+			begin
+				msg <= 'b1000111100000000100100000110; // 'LOSE'
+			end
+			else if (numRight == max - 1)
 			begin
 				msg <= 'b1000010100000010000000100001; // 'GOOD'
 				allCorrect <= 1;
-			end
-			else if (timeUp == 1)
-			begin
-				msg <= 'b1000111100000000100100000110; // 'LOSE'
 			end
 			else if (btnR && assigne[verify] == 'b1001100111100100001110000110 && ~btnM && ~btnL && ~btnU && ~btnD)
 			begin
@@ -520,7 +612,7 @@ module gameplay(
 	S: 1111111 (Space)
 	*/
     
-    reg [6:0] r = 'b1010101;
+    reg [6:0] r = 'b1111111;
     reg [6:0] mr = 'b1111111;
     reg [6:0] ml = 'b1111111;
     reg [6:0] l = 'b1111111;
@@ -622,10 +714,14 @@ module gameplay(
 	// handles inputting the name
 	always @ (posedge clockFast) 
 	begin
+    if (gameOver == 0)
+    begin
+        newGameFlag <= 'b0; // TODO: newGameFlag not maintained for long enough
+    end
 		// Don't allow change unless gameOver + score >= oldhs + newhsTextSel is showing initials
-		if (gameOver == 1 && score >= oldhs && newhsTextSel == b'110) begin
+		if (gameOver == 1 && score >= oldhs && newhsTextSel >= 'b101) begin
 			case(trackInitial)
-				b'00:
+				'b00:
 				begin
 					case (letterSel)
 						'b00000:
@@ -640,7 +736,7 @@ module gameplay(
 							begin
 								trackInitial <= trackInitial + 1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -682,7 +778,7 @@ module gameplay(
 								nameText0 <= alphabet0;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -728,7 +824,7 @@ module gameplay(
 								nameText0 <= alphabet1;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -774,7 +870,7 @@ module gameplay(
 								nameText0 <= alphabet2;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -820,7 +916,7 @@ module gameplay(
 								nameText0 <= alphabet3;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -866,7 +962,7 @@ module gameplay(
 								nameText0 <= alphabet4;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -912,7 +1008,7 @@ module gameplay(
 								nameText0 <= alphabet5;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -958,7 +1054,7 @@ module gameplay(
 								nameText0 <= alphabet6;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -1004,7 +1100,7 @@ module gameplay(
 								nameText0 <= alphabet7;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -1050,7 +1146,7 @@ module gameplay(
 								nameText0 <= alphabet8;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -1096,7 +1192,7 @@ module gameplay(
 								nameText0 <= alphabet9;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -1142,7 +1238,7 @@ module gameplay(
 								nameText0 <= alphabet10;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -1188,7 +1284,7 @@ module gameplay(
 								nameText0 <= alphabet11;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -1234,7 +1330,7 @@ module gameplay(
 								nameText0 <= alphabet12;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -1280,7 +1376,7 @@ module gameplay(
 								nameText0 <= alphabet13;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -1326,7 +1422,7 @@ module gameplay(
 								nameText0 <= alphabet14;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -1372,7 +1468,7 @@ module gameplay(
 								nameText0 <= alphabet15;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -1418,7 +1514,7 @@ module gameplay(
 								nameText0 <= alphabet16;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -1464,7 +1560,7 @@ module gameplay(
 								nameText0 <= alphabet17;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -1510,7 +1606,7 @@ module gameplay(
 								nameText0 <= alphabet18;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -1556,7 +1652,7 @@ module gameplay(
 								nameText0 <= alphabet19;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -1602,7 +1698,7 @@ module gameplay(
 								nameText0 <= alphabet20;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -1648,7 +1744,7 @@ module gameplay(
 								nameText0 <= alphabet21;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -1694,7 +1790,7 @@ module gameplay(
 								nameText0 <= alphabet22;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -1740,7 +1836,7 @@ module gameplay(
 								nameText0 <= alphabet23;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -1780,7 +1876,7 @@ module gameplay(
 								nameText0 <= alphabet24;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -1814,7 +1910,7 @@ module gameplay(
 						end
 					endcase
 				end
-				b'01:
+				'b01:
 				begin
 					case (letterSel)
 						'b00000:
@@ -1830,7 +1926,7 @@ module gameplay(
 								btnRPrev <= 1;
 								trackInitial <= trackInitial + 1;
 							end							
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -1877,7 +1973,7 @@ module gameplay(
 								nameText1 <= alphabet0;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -1929,7 +2025,7 @@ module gameplay(
 								nameText1 <= alphabet1;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -1981,7 +2077,7 @@ module gameplay(
 								nameText1 <= alphabet2;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -2033,7 +2129,7 @@ module gameplay(
 								nameText1 <= alphabet3;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -2085,7 +2181,7 @@ module gameplay(
 								nameText1 <= alphabet4;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -2137,7 +2233,7 @@ module gameplay(
 								nameText1 <= alphabet5;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -2189,7 +2285,7 @@ module gameplay(
 								nameText1 <= alphabet6;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -2241,7 +2337,7 @@ module gameplay(
 								nameText1 <= alphabet7;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -2293,7 +2389,7 @@ module gameplay(
 								nameText1 <= alphabet8;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -2345,7 +2441,7 @@ module gameplay(
 								nameText1 <= alphabet9;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -2397,7 +2493,7 @@ module gameplay(
 								nameText1 <= alphabet10;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -2449,7 +2545,7 @@ module gameplay(
 								nameText1 <= alphabet11;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -2501,7 +2597,7 @@ module gameplay(
 								nameText1 <= alphabet12;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -2553,7 +2649,7 @@ module gameplay(
 								nameText1 <= alphabet13;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -2605,7 +2701,7 @@ module gameplay(
 								nameText1 <= alphabet14;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -2657,7 +2753,7 @@ module gameplay(
 								nameText1 <= alphabet15;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -2709,7 +2805,7 @@ module gameplay(
 								nameText1 <= alphabet16;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -2761,7 +2857,7 @@ module gameplay(
 								nameText1 <= alphabet17;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -2813,7 +2909,7 @@ module gameplay(
 								nameText1 <= alphabet18;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -2865,7 +2961,7 @@ module gameplay(
 								nameText1 <= alphabet19;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -2917,7 +3013,7 @@ module gameplay(
 								nameText1 <= alphabet20;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -2969,7 +3065,7 @@ module gameplay(
 								nameText1 <= alphabet21;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -3021,7 +3117,7 @@ module gameplay(
 								nameText1 <= alphabet22;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -3073,7 +3169,7 @@ module gameplay(
 								nameText1 <= alphabet23;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -3119,7 +3215,7 @@ module gameplay(
 								nameText1 <= alphabet24;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -3159,7 +3255,7 @@ module gameplay(
 						end
 					endcase
 				end
-				b'10:
+				'b10:
 				begin
 					case (letterSel)
 						'b00000:
@@ -3175,7 +3271,7 @@ module gameplay(
 								btnLPrev <= 1;
 								trackInitial <= trackInitial - 1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
@@ -3217,12 +3313,12 @@ module gameplay(
 								nameText2 <= alphabet0;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
 							end
-							elseif (btnL == 1 && btnLPrev == 0)
+							else if (btnL == 1 && btnLPrev == 0)
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial -1;								
@@ -3264,12 +3360,12 @@ module gameplay(
 								nameText2 <= alphabet1;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
 							end
-							elseif (btnL == 1 && btnLPrev == 0)
+							else if (btnL == 1 && btnLPrev == 0)
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial -1;								
@@ -3311,12 +3407,12 @@ module gameplay(
 								nameText2 <= alphabet2;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
 							end
-							elseif (btnL == 1 && btnLPrev == 0)
+							else if (btnL == 1 && btnLPrev == 0)
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial -1;								
@@ -3358,12 +3454,12 @@ module gameplay(
 								nameText2 <= alphabet3;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
 							end
-							elseif (btnL == 1 && btnLPrev == 0)
+							else if (btnL == 1 && btnLPrev == 0)
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial -1;								
@@ -3405,12 +3501,12 @@ module gameplay(
 								nameText2 <= alphabet4;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
 							end
-							elseif (btnL == 1 && btnLPrev == 0)
+							else if (btnL == 1 && btnLPrev == 0)
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial -1;								
@@ -3452,12 +3548,12 @@ module gameplay(
 								nameText2 <= alphabet5;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
 							end
-							elseif (btnL == 1 && btnLPrev == 0)
+							else if (btnL == 1 && btnLPrev == 0)
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial -1;								
@@ -3499,12 +3595,12 @@ module gameplay(
 								nameText2 <= alphabet6;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
 							end
-							elseif (btnL == 1 && btnLPrev == 0)
+							else if (btnL == 1 && btnLPrev == 0)
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial -1;								
@@ -3546,12 +3642,12 @@ module gameplay(
 								nameText2 <= alphabet7;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
 							end
-							elseif (btnL == 1 && btnLPrev == 0)
+							else if (btnL == 1 && btnLPrev == 0)
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial -1;								
@@ -3593,12 +3689,12 @@ module gameplay(
 								nameText2 <= alphabet8;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
 							end
-							elseif (btnL == 1 && btnLPrev == 0)
+							else if (btnL == 1 && btnLPrev == 0)
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial -1;								
@@ -3640,12 +3736,12 @@ module gameplay(
 								nameText2 <= alphabet9;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
 							end
-							elseif (btnL == 1 && btnLPrev == 0)
+							else if (btnL == 1 && btnLPrev == 0)
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial -1;								
@@ -3687,12 +3783,12 @@ module gameplay(
 								nameText2 <= alphabet10;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
 							end
-							elseif (btnL == 1 && btnLPrev == 0)
+							else if (btnL == 1 && btnLPrev == 0)
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial -1;								
@@ -3734,12 +3830,12 @@ module gameplay(
 								nameText2 <= alphabet11;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
 							end
-							elseif (btnL == 1 && btnLPrev == 0)
+							else if (btnL == 1 && btnLPrev == 0)
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial -1;								
@@ -3781,12 +3877,12 @@ module gameplay(
 								nameText2 <= alphabet12;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
 							end
-							elseif (btnL == 1 && btnLPrev == 0)
+							else if (btnL == 1 && btnLPrev == 0)
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial -1;								
@@ -3828,12 +3924,12 @@ module gameplay(
 								nameText2 <= alphabet13;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
 							end
-							elseif (btnL == 1 && btnLPrev == 0)
+							else if (btnL == 1 && btnLPrev == 0)
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial -1;								
@@ -3875,12 +3971,12 @@ module gameplay(
 								nameText2 <= alphabet14;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
 							end
-							elseif (btnL == 1 && btnLPrev == 0)
+							else if (btnL == 1 && btnLPrev == 0)
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial -1;								
@@ -3922,12 +4018,12 @@ module gameplay(
 								nameText2 <= alphabet15;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
 							end
-							elseif (btnL == 1 && btnLPrev == 0)
+							else if (btnL == 1 && btnLPrev == 0)
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial -1;								
@@ -3969,12 +4065,12 @@ module gameplay(
 								nameText2 <= alphabet16;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
 							end
-							elseif (btnL == 1 && btnLPrev == 0)
+							else if (btnL == 1 && btnLPrev == 0)
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial -1;								
@@ -4016,12 +4112,12 @@ module gameplay(
 								nameText2 <= alphabet17;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
 							end
-							elseif (btnL == 1 && btnLPrev == 0)
+							else if (btnL == 1 && btnLPrev == 0)
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial -1;								
@@ -4063,12 +4159,12 @@ module gameplay(
 								nameText2 <= alphabet18;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
 							end
-							elseif (btnL == 1 && btnLPrev == 0)
+							else if (btnL == 1 && btnLPrev == 0)
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial -1;								
@@ -4110,12 +4206,12 @@ module gameplay(
 								nameText2 <= alphabet19;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
 							end
-							elseif (btnL == 1 && btnLPrev == 0)
+							else if (btnL == 1 && btnLPrev == 0)
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial -1;								
@@ -4157,12 +4253,12 @@ module gameplay(
 								nameText2 <= alphabet20;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
 							end
-							elseif (btnL == 1 && btnLPrev == 0)
+							else if (btnL == 1 && btnLPrev == 0)
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial -1;								
@@ -4204,12 +4300,12 @@ module gameplay(
 								nameText2 <= alphabet21;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
 							end
-							elseif (btnL == 1 && btnLPrev == 0)
+							else if (btnL == 1 && btnLPrev == 0)
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial -1;								
@@ -4251,12 +4347,12 @@ module gameplay(
 								nameText2 <= alphabet22;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
 							end
-							elseif (btnL == 1 && btnLPrev == 0)
+							else if (btnL == 1 && btnLPrev == 0)
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial -1;								
@@ -4298,12 +4394,12 @@ module gameplay(
 								nameText2 <= alphabet23;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
 							end
-							elseif (btnL == 1 && btnLPrev == 0)
+							else if (btnL == 1 && btnLPrev == 0)
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial -1;								
@@ -4339,12 +4435,12 @@ module gameplay(
 								nameText2 <= alphabet24;
 								btnUPrev <= 'b1;
 							end
-							elseif (btnM == 1 && btnMPrev == 0)
+							else if (btnM == 1 && btnMPrev == 0)
 							begin
 								btnMPrev <= 1;
 								newGameFlag <= 1;
 							end
-							elseif (btnL == 1 && btnLPrev == 0)
+							else if (btnL == 1 && btnLPrev == 0)
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial -1;								
@@ -4375,14 +4471,30 @@ module gameplay(
 					endcase
 				end
 			endcase
-		end
+		end 
+        else if (gameOver == 1 && score < oldhs)
+        begin
+            if (newhsTextSel == 'b011)
+            begin
+                newGameFlag <= 1;
+            end
+        end
+        else // gameOver == 0
+        begin
+            newGameFlag <= 0;
+        end
 	end
 
+    
 	// handles all displaying to Seven Seg Display
 	always @ (posedge clockFast) begin
 
 		if (state == 'b00)
 		begin
+                newhsTextSel <= 'b000;
+                newhsCount <= 5'b00000;
+                hsCount <= 5'b00000;
+                textSel <= 'b00;
 	        case(cnt)        
 	        	'b00: begin
 	                out <= r;
@@ -4405,11 +4517,6 @@ module gameplay(
 	                cnt <= cnt + 1;
 	            end             
 	        endcase
-		end
-		else if (state == 'b01 && index < 50)
-		begin
-			out <= 'b1111111;
-			an <= 'b1111;
 		end
 		else if (state == 'b10)
 		begin
@@ -4518,13 +4625,13 @@ module gameplay(
 			    end
 	        endcase
 
-	        if (hsCount != 9'b111111111)
+	        if (hsCount != 5'b11111)
 	        begin
 	        	hsCount <= hsCount + 1;
 	        end
 	        else
 	        begin
-	        	hsCount <= 9'b000000000;
+	        	hsCount <= 5'b00000;
 	        	textSel <= textSel + 1;
 	        end
 		end
@@ -4569,9 +4676,9 @@ module gameplay(
 
 			if (score >= oldhs)
 			begin
-				oldhs = score;
-				hsvalueText2 = temphsvalueText2;
-				hsvalueText3 = temphsvalueText3;
+				oldhs <= score;
+				hsvalueText2 <= temphsvalueText2;
+				hsvalueText3 <= temphsvalueText3;
 
 				case(newhsTextSel)
 			    	'b000:
@@ -4649,7 +4756,7 @@ module gameplay(
 				            end             
 				        endcase
 				    end
-				    b'011:
+				    'b011:
 				    begin
 				    	case(cnt)        
 				        	'b00: begin
@@ -4674,7 +4781,7 @@ module gameplay(
 				            end             
 				        endcase
 				    end
-				    b'100:
+				    'b100:
 				    begin
 				    	case(cnt)        
 				        	'b00: begin
@@ -4699,7 +4806,7 @@ module gameplay(
 				            end             
 				        endcase
 				    end
-				    b'101:
+				    'b101:
 				    begin
 				    	case(cnt)        
 				        	'b00: begin
@@ -4724,7 +4831,7 @@ module gameplay(
 				            end             
 				        endcase
 				    end
-				    b'110:				 				     
+				    'b110:				 				     
 				    begin
 				    	case(cnt)        
 				        	'b00: begin
@@ -4754,8 +4861,9 @@ module gameplay(
 			end
 			else
 			begin
-				case (newTextSel)
+				case (newhsTextSel)
 					'b000:
+					begin
 						case(cnt)        
 				        	'b00: begin
 				                out <= 'b1001100; // R
@@ -4778,8 +4886,7 @@ module gameplay(
 				                cnt <= cnt + 1;
 				            end             
 				        endcase
-					begin
-					end
+						 end
 					'b001:
 					begin
 						case(cnt)        
@@ -4831,6 +4938,7 @@ module gameplay(
 				        endcase
 					end
 				endcase
+                
 			end
 
 
@@ -4838,13 +4946,13 @@ module gameplay(
 				Cycle through to display NEW, HIGH, SCOR, (score), ENTR, NAME
 				Stops incrementing nshsTextSel at 6
 			*/
-			if (newhsCount != 9'b111111111)
+			if (newhsCount != 5'b11111)
 	        begin
 	        	newhsCount <= newhsCount + 1;
 	        end
-	        else if (newhsTextSel < 6)
+	        else if (newhsTextSel < 'b110)
 	        begin
-	        	newhsCount <= 9'b000000000;
+	        	newhsCount <= 5'b00000;
 	        	newhsTextSel <= newhsTextSel + 1;
 	        end
 		end

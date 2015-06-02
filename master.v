@@ -23,7 +23,7 @@ module master(
     input rst,
 	 input btnM, input btnL, input btnR, input btnU, input btnD,
 	 input [7:0] sw,
-	 output [6:0] led,
+	 output [7:0] led,
     output [6:0] out,
     output [3:0] an
     );
@@ -51,7 +51,7 @@ module master(
 	 wire [1:0] state;
 	 
 	 wire clkOut;
-    wire newGame;
+    wire newGameFlag;
 
 	 
    wire [17:0] clk_dv_inc;
@@ -117,10 +117,10 @@ module master(
        begin
           //inst_wd[7:0] <= sw[7:0]; // give the next instruction
           step_dR[2:0]  <= {btnR, step_dR[2:1]};
-			 step_dM[2:0]  <= {btnR, step_dM[2:1]};
-			 step_dL[2:0]  <= {btnR, step_dL[2:1]};
-			 step_dU[2:0]  <= {btnR, step_dU[2:1]};
-			 step_dD[2:0]  <= {btnR, step_dD[2:1]};
+			 step_dM[2:0]  <= {btnM, step_dM[2:1]};
+			 step_dL[2:0]  <= {btnL, step_dL[2:1]};
+			 step_dU[2:0]  <= {btnU, step_dU[2:1]};
+			 step_dD[2:0]  <= {btnD, step_dD[2:1]};
        end
 
    always @ (posedge clk)
@@ -221,7 +221,7 @@ module master(
         .btnL(lOut),
         .validStart(validStart),
         .prevState (state),
-		  .newGame(newGame),
+		  .newGameFlag(newGameFlag),
         // output
         .state(state)
     
@@ -257,7 +257,7 @@ module master(
 	 // output
     .an(an),
     .out(out),
-	 .newGame(newGame)
+	 .newGameFlag(newGameFlag)
     );		
  
 			
