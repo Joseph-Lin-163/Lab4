@@ -4484,11 +4484,11 @@ module gameplay(
 				newGameFlag <= 0;
 				btnMPrev <= 0;
 				letterSel <= 'b00000;
-				trackInitial = 2'b00;
-				nameText0 = 7'b0100000;
-				nameText1 = 7'b0100000;
-				nameText2 = 7'b0100000;
-				nameText3 = 7'b1111111; 
+				trackInitial <= 2'b00;
+				nameText0 <= 7'b0100000;
+				nameText1 <= 7'b0100000;
+				nameText2 <= 7'b0100000;
+				nameText3 <= 7'b1111111; 
 		  end
 	end
 
