@@ -735,6 +735,9 @@ module gameplay(
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
+								btnRPrev <= 1;
+
 							end
 							else if (btnM == 1 && btnMPrev == 0)
 							begin
@@ -785,7 +788,9 @@ module gameplay(
 							end
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
+								btnRPrev <= 1;
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
 							end
 
 							if (btnR == 0)
@@ -832,6 +837,8 @@ module gameplay(
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
+								btnRPrev <= 1;
 							end
 
 							if (btnR == 0)
@@ -878,6 +885,8 @@ module gameplay(
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
+								btnRPrev <= 1;
 							end
 
 							if (btnR == 0)
@@ -924,6 +933,8 @@ module gameplay(
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
+								btnRPrev <= 1;
 							end
 
 							if (btnR == 0)
@@ -970,6 +981,8 @@ module gameplay(
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
+								btnRPrev <= 1;
 							end
 
 							if (btnR == 0)
@@ -1016,6 +1029,8 @@ module gameplay(
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
+								btnRPrev <= 1;
 							end
 
 							if (btnR == 0)
@@ -1062,6 +1077,8 @@ module gameplay(
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
+								btnRPrev <= 1;
 							end
 
 							if (btnR == 0)
@@ -1108,6 +1125,8 @@ module gameplay(
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
+								btnRPrev <= 1;
 							end
 
 							if (btnR == 0)
@@ -1154,6 +1173,8 @@ module gameplay(
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
+								btnRPrev <= 1;
 							end
 
 							if (btnR == 0)
@@ -1200,6 +1221,8 @@ module gameplay(
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
+								btnRPrev <= 1;
 							end
 
 							if (btnR == 0)
@@ -1246,6 +1269,8 @@ module gameplay(
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
+								btnRPrev <= 1;
 							end
 
 							if (btnR == 0)
@@ -1292,6 +1317,8 @@ module gameplay(
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
+								btnRPrev <= 1;
 							end
 
 							if (btnR == 0)
@@ -1338,6 +1365,8 @@ module gameplay(
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
+								btnRPrev <= 1;
 							end
 
 							if (btnR == 0)
@@ -1384,6 +1413,8 @@ module gameplay(
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
+								btnRPrev <= 1;
 							end
 
 							if (btnR == 0)
@@ -1430,6 +1461,8 @@ module gameplay(
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
+								btnRPrev <= 1;
 							end
 
 							if (btnR == 0)
@@ -1476,6 +1509,8 @@ module gameplay(
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
+								btnRPrev <= 1;
 							end
 
 							if (btnR == 0)
@@ -1522,6 +1557,8 @@ module gameplay(
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
+								btnRPrev <= 1;
 							end
 
 							if (btnR == 0)
@@ -1568,6 +1605,8 @@ module gameplay(
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
+								btnRPrev <= 1;
 							end
 
 							if (btnR == 0)
@@ -1614,6 +1653,8 @@ module gameplay(
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
+								btnRPrev <= 1;
 							end
 
 							if (btnR == 0)
@@ -1660,6 +1701,8 @@ module gameplay(
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
+								btnRPrev <= 1;
 							end
 
 							if (btnR == 0)
@@ -1706,6 +1749,8 @@ module gameplay(
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
+								btnRPrev <= 1;
 							end
 
 							if (btnR == 0)
@@ -1752,6 +1797,8 @@ module gameplay(
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
+								btnRPrev <= 1;
 							end
 
 							if (btnR == 0)
@@ -1798,6 +1845,8 @@ module gameplay(
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
+								btnRPrev <= 1;
 							end
 
 							if (btnR == 0)
@@ -1844,6 +1893,8 @@ module gameplay(
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
+								btnRPrev <= 1;
 							end
 
 							if (btnR == 0)
@@ -1884,6 +1935,8 @@ module gameplay(
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
+								btnRPrev <= 1;
 							end
 
 							if (btnR == 0)
@@ -1925,6 +1978,7 @@ module gameplay(
 							begin
 								btnRPrev <= 1;
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
 							end							
 							else if (btnM == 1 && btnMPrev == 0)
 							begin
@@ -1935,6 +1989,7 @@ module gameplay(
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial - 1;
+								letterSel <= 'b00000;
 							end
 
 							if (btnR == 0)
@@ -1982,11 +2037,13 @@ module gameplay(
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial - 1;
+								letterSel <= 'b00000;
 							end
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								btnRPrev <= 1;
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
 							end
 
 							if (btnR == 0)
@@ -2034,11 +2091,13 @@ module gameplay(
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial - 1;
+								letterSel <= 'b00000;
 							end
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								btnRPrev <= 1;
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
 							end
 
 							if (btnR == 0)
@@ -2086,11 +2145,13 @@ module gameplay(
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial - 1;
+								letterSel <= 'b00000;
 							end
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								btnRPrev <= 1;
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
 							end
 
 							if (btnR == 0)
@@ -2138,11 +2199,13 @@ module gameplay(
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial - 1;
+								letterSel <= 'b00000;
 							end
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								btnRPrev <= 1;
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
 							end
 
 							if (btnR == 0)
@@ -2190,11 +2253,13 @@ module gameplay(
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial - 1;
+								letterSel <= 'b00000;
 							end
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								btnRPrev <= 1;
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
 							end
 
 							if (btnR == 0)
@@ -2242,11 +2307,13 @@ module gameplay(
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial - 1;
+								letterSel <= 'b00000;
 							end
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								btnRPrev <= 1;
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
 							end
 
 							if (btnR == 0)
@@ -2294,11 +2361,13 @@ module gameplay(
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial - 1;
+								letterSel <= 'b00000;
 							end
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								btnRPrev <= 1;
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
 							end
 
 							if (btnR == 0)
@@ -2346,11 +2415,13 @@ module gameplay(
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial - 1;
+								letterSel <= 'b00000;
 							end
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								btnRPrev <= 1;
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
 							end
 
 							if (btnR == 0)
@@ -2398,11 +2469,13 @@ module gameplay(
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial - 1;
+								letterSel <= 'b00000;
 							end
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								btnRPrev <= 1;
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
 							end
 
 							if (btnR == 0)
@@ -2450,11 +2523,13 @@ module gameplay(
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial - 1;
+								letterSel <= 'b00000;
 							end
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								btnRPrev <= 1;
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
 							end
 
 							if (btnR == 0)
@@ -2502,11 +2577,13 @@ module gameplay(
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial - 1;
+								letterSel <= 'b00000;
 							end
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								btnRPrev <= 1;
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
 							end
 
 							if (btnR == 0)
@@ -2554,11 +2631,13 @@ module gameplay(
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial - 1;
+								letterSel <= 'b00000;
 							end
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								btnRPrev <= 1;
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
 							end
 
 							if (btnR == 0)
@@ -2606,11 +2685,13 @@ module gameplay(
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial - 1;
+								letterSel <= 'b00000;
 							end
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								btnRPrev <= 1;
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
 							end
 
 							if (btnR == 0)
@@ -2658,11 +2739,13 @@ module gameplay(
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial - 1;
+								letterSel <= 'b00000;
 							end
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								btnRPrev <= 1;
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
 							end
 
 							if (btnR == 0)
@@ -2710,11 +2793,13 @@ module gameplay(
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial - 1;
+								letterSel <= 'b00000;
 							end
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								btnRPrev <= 1;
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
 							end
 
 							if (btnR == 0)
@@ -2762,11 +2847,13 @@ module gameplay(
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial - 1;
+								letterSel <= 'b00000;
 							end
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								btnRPrev <= 1;
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
 							end
 
 							if (btnR == 0)
@@ -2814,11 +2901,13 @@ module gameplay(
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial - 1;
+								letterSel <= 'b00000;
 							end
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								btnRPrev <= 1;
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
 							end
 
 							if (btnR == 0)
@@ -2866,11 +2955,13 @@ module gameplay(
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial - 1;
+								letterSel <= 'b00000;
 							end
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								btnRPrev <= 1;
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
 							end
 
 							if (btnR == 0)
@@ -2918,11 +3009,13 @@ module gameplay(
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial - 1;
+								letterSel <= 'b00000;
 							end
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								btnRPrev <= 1;
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
 							end
 
 							if (btnR == 0)
@@ -2970,11 +3063,13 @@ module gameplay(
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial - 1;
+								letterSel <= 'b00000;
 							end
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								btnRPrev <= 1;
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
 							end
 
 							if (btnR == 0)
@@ -3022,11 +3117,13 @@ module gameplay(
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial - 1;
+								letterSel <= 'b00000;
 							end
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								btnRPrev <= 1;
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
 							end
 
 							if (btnR == 0)
@@ -3074,11 +3171,13 @@ module gameplay(
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial - 1;
+								letterSel <= 'b00000;
 							end
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								btnRPrev <= 1;
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
 							end
 
 							if (btnR == 0)
@@ -3126,11 +3225,13 @@ module gameplay(
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial - 1;
+								letterSel <= 'b00000;
 							end
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								btnRPrev <= 1;
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
 							end
 
 							if (btnR == 0)
@@ -3178,11 +3279,13 @@ module gameplay(
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial - 1;
+								letterSel <= 'b00000;
 							end
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								btnRPrev <= 1;
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
 							end
 
 							if (btnR == 0)
@@ -3224,11 +3327,13 @@ module gameplay(
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial - 1;
+								letterSel <= 'b00000;
 							end
 							else if (btnR == 1 && btnRPrev == 0)
 							begin
 								btnRPrev <= 1;
 								trackInitial <= trackInitial + 1;
+								letterSel <= 'b00000;
 							end
 
 							if (btnR == 0)
@@ -3270,6 +3375,7 @@ module gameplay(
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial - 1;
+								letterSel <= 'b00000;
 							end
 							else if (btnM == 1 && btnMPrev == 0)
 							begin
@@ -3321,7 +3427,8 @@ module gameplay(
 							else if (btnL == 1 && btnLPrev == 0)
 							begin
 								btnLPrev <= 1;
-								trackInitial <= trackInitial -1;								
+								trackInitial <= trackInitial -1;
+								letterSel <= 'b00000;								
 							end
 
 							if (btnL == 0)
@@ -3368,7 +3475,8 @@ module gameplay(
 							else if (btnL == 1 && btnLPrev == 0)
 							begin
 								btnLPrev <= 1;
-								trackInitial <= trackInitial -1;								
+								trackInitial <= trackInitial -1;
+								letterSel <= 'b00000;								
 							end
 
 							if (btnL == 0)
@@ -3415,7 +3523,8 @@ module gameplay(
 							else if (btnL == 1 && btnLPrev == 0)
 							begin
 								btnLPrev <= 1;
-								trackInitial <= trackInitial -1;								
+								trackInitial <= trackInitial -1;
+								letterSel <= 'b00000;								
 							end
 
 							if (btnL == 0)
@@ -3463,6 +3572,7 @@ module gameplay(
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial -1;								
+								letterSel <= 'b00000;
 							end
 
 							if (btnL == 0)
@@ -3509,7 +3619,8 @@ module gameplay(
 							else if (btnL == 1 && btnLPrev == 0)
 							begin
 								btnLPrev <= 1;
-								trackInitial <= trackInitial -1;								
+								trackInitial <= trackInitial -1;
+								letterSel <= 'b00000;								
 							end
 							
 							if (btnL == 0)
@@ -3556,7 +3667,8 @@ module gameplay(
 							else if (btnL == 1 && btnLPrev == 0)
 							begin
 								btnLPrev <= 1;
-								trackInitial <= trackInitial -1;								
+								trackInitial <= trackInitial -1;
+								letterSel <= 'b00000;								
 							end
 							
 							if (btnL == 0)
@@ -3603,7 +3715,8 @@ module gameplay(
 							else if (btnL == 1 && btnLPrev == 0)
 							begin
 								btnLPrev <= 1;
-								trackInitial <= trackInitial -1;								
+								trackInitial <= trackInitial -1;
+								letterSel <= 'b00000;								
 							end
 							
 							if (btnL == 0)
@@ -3650,7 +3763,8 @@ module gameplay(
 							else if (btnL == 1 && btnLPrev == 0)
 							begin
 								btnLPrev <= 1;
-								trackInitial <= trackInitial -1;								
+								trackInitial <= trackInitial -1;
+								letterSel <= 'b00000;								
 							end
 							
 							if (btnL == 0)
@@ -3697,7 +3811,8 @@ module gameplay(
 							else if (btnL == 1 && btnLPrev == 0)
 							begin
 								btnLPrev <= 1;
-								trackInitial <= trackInitial -1;								
+								trackInitial <= trackInitial -1;
+								letterSel <= 'b00000;								
 							end
 							
 							if (btnL == 0)
@@ -3745,6 +3860,7 @@ module gameplay(
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial -1;								
+								letterSel <= 'b00000;
 							end
 							
 							if (btnL == 0)
@@ -3791,7 +3907,8 @@ module gameplay(
 							else if (btnL == 1 && btnLPrev == 0)
 							begin
 								btnLPrev <= 1;
-								trackInitial <= trackInitial -1;								
+								trackInitial <= trackInitial -1;
+								letterSel <= 'b00000;								
 							end
 
 							if (btnL == 0)
@@ -3839,6 +3956,7 @@ module gameplay(
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial -1;								
+								letterSel <= 'b00000;
 							end
 
 							if (btnL == 0)
@@ -3885,7 +4003,8 @@ module gameplay(
 							else if (btnL == 1 && btnLPrev == 0)
 							begin
 								btnLPrev <= 1;
-								trackInitial <= trackInitial -1;								
+								trackInitial <= trackInitial -1;	
+								letterSel <= 'b00000;							
 							end
 							
 							if (btnL == 0)
@@ -3932,7 +4051,8 @@ module gameplay(
 							else if (btnL == 1 && btnLPrev == 0)
 							begin
 								btnLPrev <= 1;
-								trackInitial <= trackInitial -1;								
+								trackInitial <= trackInitial -1;	
+								letterSel <= 'b00000;							
 							end
 							
 							if (btnL == 0)
@@ -3980,6 +4100,7 @@ module gameplay(
 							begin
 								btnLPrev <= 1;
 								trackInitial <= trackInitial -1;								
+								letterSel <= 'b00000;
 							end
 
 							if (btnL == 0)
@@ -4026,7 +4147,8 @@ module gameplay(
 							else if (btnL == 1 && btnLPrev == 0)
 							begin
 								btnLPrev <= 1;
-								trackInitial <= trackInitial -1;								
+								trackInitial <= trackInitial -1;	
+								letterSel <= 'b00000;							
 							end
 							
 							if (btnL == 0)
@@ -4073,7 +4195,8 @@ module gameplay(
 							else if (btnL == 1 && btnLPrev == 0)
 							begin
 								btnLPrev <= 1;
-								trackInitial <= trackInitial -1;								
+								trackInitial <= trackInitial -1;	
+								letterSel <= 'b00000;							
 							end
 
 							if (btnL == 0)
@@ -4120,7 +4243,8 @@ module gameplay(
 							else if (btnL == 1 && btnLPrev == 0)
 							begin
 								btnLPrev <= 1;
-								trackInitial <= trackInitial -1;								
+								trackInitial <= trackInitial -1;	
+								letterSel <= 'b00000;							
 							end
 							
 							if (btnL == 0)
@@ -4167,7 +4291,8 @@ module gameplay(
 							else if (btnL == 1 && btnLPrev == 0)
 							begin
 								btnLPrev <= 1;
-								trackInitial <= trackInitial -1;								
+								trackInitial <= trackInitial -1;
+								letterSel <= 'b00000;								
 							end
 							
 							if (btnL == 0)
@@ -4214,7 +4339,8 @@ module gameplay(
 							else if (btnL == 1 && btnLPrev == 0)
 							begin
 								btnLPrev <= 1;
-								trackInitial <= trackInitial -1;								
+								trackInitial <= trackInitial -1;	
+								letterSel <= 'b00000;							
 							end
 							
 							if (btnL == 0)
@@ -4261,7 +4387,8 @@ module gameplay(
 							else if (btnL == 1 && btnLPrev == 0)
 							begin
 								btnLPrev <= 1;
-								trackInitial <= trackInitial -1;								
+								trackInitial <= trackInitial -1;
+								letterSel <= 'b00000;								
 							end
 							
 							if (btnL == 0)
@@ -4308,7 +4435,8 @@ module gameplay(
 							else if (btnL == 1 && btnLPrev == 0)
 							begin
 								btnLPrev <= 1;
-								trackInitial <= trackInitial -1;								
+								trackInitial <= trackInitial -1;	
+								letterSel <= 'b00000;							
 							end
 							
 							if (btnL == 0)
@@ -4355,7 +4483,8 @@ module gameplay(
 							else if (btnL == 1 && btnLPrev == 0)
 							begin
 								btnLPrev <= 1;
-								trackInitial <= trackInitial -1;								
+								trackInitial <= trackInitial -1;	
+								letterSel <= 'b00000;							
 							end
 
 							if (btnL == 0)
@@ -4402,7 +4531,8 @@ module gameplay(
 							else if (btnL == 1 && btnLPrev == 0)
 							begin
 								btnLPrev <= 1;
-								trackInitial <= trackInitial -1;								
+								trackInitial <= trackInitial -1;	
+								letterSel <= 'b00000;							
 							end
 							
 							if (btnL == 0)
@@ -4443,7 +4573,8 @@ module gameplay(
 							else if (btnL == 1 && btnLPrev == 0)
 							begin
 								btnLPrev <= 1;
-								trackInitial <= trackInitial -1;								
+								trackInitial <= trackInitial -1;	
+								letterSel <= 'b00000;							
 							end
 							
 							if (btnL == 0)
@@ -4481,6 +4612,11 @@ module gameplay(
 		  end
 		  else if (gameOver == 0 && btnM == 0)
 		  begin
+		  		/*
+		  			Warning:
+		  			This is going to cause the welcome screen -> high score screen
+		  			Show AAA as the initials.
+		  		*/
 				newGameFlag <= 0;
 				btnMPrev <= 0;
 				letterSel <= 'b00000;
