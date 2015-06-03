@@ -49,6 +49,7 @@ module master(
     wire validStart;
 	 
 	 wire [1:0] state;
+	 wire gameOver;
 	 
 	 wire clkOut;
     wire newGameFlag;
@@ -222,6 +223,7 @@ module master(
         .validStart(validStart),
         .prevState (state),
 		  .newGameFlag(newGameFlag),
+		  .gameOver(gameOver),
         // output
         .state(state)
     
@@ -257,8 +259,9 @@ module master(
 	 // output
     .an(an),
     .out(out),
-	 .newGameFlag(newGameFlag)
-    );		
+	 .newGameFlag(newGameFlag),
+	 .gameOverOut(gameOver)
+    );			
  
 			
 

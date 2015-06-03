@@ -42,7 +42,7 @@ module tb(
     wire clockBlink;
     wire clockInit;
     wire validStart;
-
+	 wire gameOver;
     
     
     wire [1:0] state;
@@ -99,6 +99,7 @@ module tb(
         .validStart(validStart),
         .prevState (state),
 		  .newGameFlag(newGameFlag),
+		  .gameOver(gameOver),
         // output
         .state(state)
     
@@ -134,7 +135,8 @@ module tb(
 	 // output
     .an(an),
     .out(out),
-	 .newGameFlag(newGameFlag)
+	 .newGameFlag(newGameFlag),
+	 .gameOverOut(gameOver)
     );		
             
     initial begin

@@ -28,6 +28,7 @@ module mainMenu(
     input validStart,
     input [1:0] prevState,
     input newGameFlag,
+	 input gameOver,
 	 
     output reg [1:0] state
     
@@ -44,7 +45,7 @@ module mainMenu(
             case(prevState)
                     2'b00: // menu
                         begin
-                            if (btnM == 1 && validStart == 1)
+                            if (btnM == 1 && validStart == 1 && gameOver == 0)
                                 state <= 2'b01; // game start
                             else if (btnR == 1)
                                 state <= 2'b10; // high score

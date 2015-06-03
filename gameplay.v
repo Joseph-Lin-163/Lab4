@@ -42,7 +42,8 @@ module gameplay(
     // Outputs
     output reg [3:0] an,
     output reg [6:0] out,
-	output reg newGameFlag
+	 output reg newGameFlag,
+	 output reg gameOverOut
 
     );
     
@@ -714,10 +715,6 @@ module gameplay(
 	// handles inputting the name
 	always @ (posedge clockFast) 
 	begin
-    if (gameOver == 0)
-    begin
-        newGameFlag <= 'b0; // TODO: newGameFlag not maintained for long enough
-    end
 		// Don't allow change unless gameOver + score >= oldhs + newhsTextSel is showing initials
 		if (gameOver == 1 && score >= oldhs && newhsTextSel >= 'b101) begin
 			case(trackInitial)
@@ -4488,6 +4485,7 @@ module gameplay(
     
 	// handles all displaying to Seven Seg Display
 	always @ (posedge clockFast) begin
+		gameOverOut <= gameOver;
 
 		if (state == 'b00)
 		begin
