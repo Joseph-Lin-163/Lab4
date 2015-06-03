@@ -303,12 +303,13 @@ module gameplay(
 	reg timeUp = 0;
 	reg mistake = 0;
 	reg prevHint = 0;
-
+   reg scoreSet = 0;
 	 
 	// handles going through the pattern at the appropriate clock speed
 	always @ (posedge clk) begin
-    if (gameOver == 1 && score > 0 && (textSel == 0 || newhsTextSel == 0))
+    if (gameOver == 1 && score > 0 && scoreSet == 0)
     begin
+	 scoreSet <= 1;
                                 if (score >= 'b010100) // 20
                                 begin
                                     temphsvalueText2 <= 'b0100100; // 2
@@ -387,6 +388,7 @@ module gameplay(
         gameOver <= 0;
         max <= 'b000001; 
         score <= 0;
+		  scoreSet <= 0;
         temphsvalueText2 <= 'b1000000;
         temphsvalueText3 <= 'b1000000;
     end
@@ -395,6 +397,7 @@ module gameplay(
         gameOver <= 0;
         max <= 'b000001; 
         score <= 0;
+		  scoreSet <= 0;
         temphsvalueText2 <= 'b1000000;
         temphsvalueText3 <= 'b1000000;
     end
@@ -4475,11 +4478,18 @@ module gameplay(
             begin
                 newGameFlag <= 1;
             end
-        end
-        else // gameOver == 0
-        begin
-            newGameFlag <= 0;
-        end
+		  end
+		  else if (gameOver == 0 && btnM == 0)
+		  begin
+				newGameFlag <= 0;
+				btnMPrev <= 0;
+				letterSel <= 'b00000;
+				trackInitial = 2'b00;
+				nameText0 = 7'b0100000;
+				nameText1 = 7'b0100000;
+				nameText2 = 7'b0100000;
+				nameText3 = 7'b1111111; 
+		  end
 	end
 
     
